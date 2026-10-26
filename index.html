@@ -69,34 +69,35 @@
   .label { font-size: 12px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
   .err { color: var(--ink); font-size: 14px; min-height: 18px; margin: 0; font-weight: 500; }
 
-  /* ---------- WEKTOROWA DŁOŃ (z boku, od środka: kciuk na górze, pod nim 4 palce) ---------- */
+  /* ---------- WEKTOROWA DŁOŃ (z boku, od środka: kciuk na górze, pod nim 4 palce) ----------
+     Palce to kapsułki o okrągłych końcach. Długością steruje JS (najpierw zwijają się
+     do kółek przy krawędzi dłoni, potem rosną poza dłoń); obrotem i resztą — CSS. */
   .hs { display: block; overflow: visible; }
-  .hs .f, .hs .th, .hs .palm { fill: var(--bg); stroke: var(--ink); stroke-width: 6; stroke-linejoin: round; }
+  .hs .th, .hs .palm { fill: var(--bg); stroke: var(--ink); stroke-width: 6; stroke-linejoin: round; }
   .hs .cuff { fill: var(--ink); }
+  .hs .f line { stroke-linecap: round; }
+  .hs .f .o { stroke: var(--ink); }
+  .hs .f .i { stroke: var(--bg); }
+  .hs .hole { fill: var(--ink); stroke: var(--ink); stroke-width: 4; opacity: 0; transition: opacity .2s; }
   .hs .body { transform-box: view-box; transform-origin: 40px 90px; transition: transform .28s cubic-bezier(.3,1.3,.5,1); }
-  .hs .f, .hs .th { transform-box: fill-box; transform-origin: 0% 50%; transition: transform .2s cubic-bezier(.3,1.4,.5,1); }
-  .hs .f1 { --c: .427; } .hs .f2 { --c: .438; } .hs .f3 { --c: .45; } .hs .f4 { --c: .49; }
-  .hs .f { transform: scaleX(var(--c)); }
-  /* palec */
-  .hs[data-g="one"] .f1 { transform: none; }
+  .hs .f { transform-box: view-box; transition: transform .22s cubic-bezier(.3,1.3,.5,1); }
+  .hs .th { transform-box: fill-box; transform-origin: 0% 50%; transition: transform .2s cubic-bezier(.3,1.4,.5,1); }
   /* dwa palce */
-  .hs[data-g="two"] .f1 { transform: rotate(-9deg); }
-  .hs[data-g="two"] .f2 { transform: rotate(7deg); }
+  .hs[data-g="two"] .f1 { transform: rotate(-11deg); }
+  .hs[data-g="two"] .f2 { transform: rotate(8deg); }
   /* ściana — palce złożone razem */
-  .hs[data-g="wall"] .f { transform: none; }
   .hs[data-g="wall"] .th { transform: translateX(14px); }
   /* słońce — szeroko rozczapierzone */
-  .hs[data-g="sun"] .f1 { transform: rotate(-30deg); }
-  .hs[data-g="sun"] .f2 { transform: rotate(-10deg); }
-  .hs[data-g="sun"] .f3 { transform: rotate(10deg); }
-  .hs[data-g="sun"] .f4 { transform: rotate(30deg); }
+  .hs[data-g="sun"] .f1 { transform: rotate(-32deg); }
+  .hs[data-g="sun"] .f2 { transform: rotate(-11deg); }
+  .hs[data-g="sun"] .f3 { transform: rotate(11deg); }
+  .hs[data-g="sun"] .f4 { transform: rotate(32deg); }
   .hs[data-g="sun"] .th { transform: translate(-6px, -4px) rotate(-38deg); }
-  /* daszek — dłoń obrócona, palce w dół jak dach / parasol / góra */
+  /* daszek — dłoń w górę, palce od kłykci w dół */
   .hs[data-g="roof"] .body { transform: rotate(-30deg); }
-  .hs[data-g="roof"] .f { transform: translateX(46px) rotate(64deg); }
+  .hs[data-g="roof"] .f { transform: rotate(62deg); }
   .hs[data-g="roof"] .th { transform: translateX(12px); }
   /* fala — płaska dłoń, która faluje */
-  .hs[data-g="wave"] .f { transform: none; }
   .hs[data-g="wave"] .th { transform: translateX(14px); }
   .hs[data-g="wave"] .body { animation: wv 1.3s ease-in-out infinite; }
   .hs[data-g="wave"] .f { animation: wvf 1.3s ease-in-out infinite; }
@@ -104,8 +105,11 @@
   @keyframes wvf { 0%, 100% { transform: rotate(18deg); } 50% { transform: rotate(-16deg); } }
   .hs.static[data-g="wave"] .body { animation: none; transform: rotate(-10deg); }
   .hs.static[data-g="wave"] .f { animation: none; transform: rotate(16deg); }
-  .hs.static .f, .hs.static .th, .hs.static .body { transition: none; }
-  .hs.thin .f, .hs.thin .th, .hs.thin .palm { stroke-width: 9; }
+  /* dziurka / norka — kciuk i palce zwinięte w walec */
+  .hs[data-g="hole"] .th { transform: translate(18px, 9px); }
+  .hs[data-g="hole"] .hole { opacity: 1; }
+  .hs.static .f, .hs.static .th, .hs.static .body, .hs.static .hole { transition: none; }
+  .hs.thin .th, .hs.thin .palm { stroke-width: 9; }
 
   /* ---------- HOME ---------- */
   .logo { font-size: 22px; letter-spacing: -.03em; margin: 6px 0 0; }
@@ -123,10 +127,6 @@
     100%  { transform: translateY(0) rotate(0); }
   }
   /* na „trzy” wyskakują dwa palce, potem znowu pięść */
-  .hero .hs .f1 { animation: v1 3.6s infinite; transition: none; }
-  .hero .hs .f2 { animation: v2 3.6s infinite; transition: none; }
-  @keyframes v1 { 0%, 49% { transform: scaleX(var(--c)); } 52%, 86% { transform: rotate(-9deg); } 91%, 100% { transform: scaleX(var(--c)); } }
-  @keyframes v2 { 0%, 49% { transform: scaleX(var(--c)); } 52%, 86% { transform: rotate(7deg); } 91%, 100% { transform: scaleX(var(--c)); } }
   .rhythm { display: flex; gap: 16px; font-weight: 900; font-size: 15px; letter-spacing: .06em; color: var(--line); }
   .rhythm span { animation: beat 3.6s linear infinite; }
   .rhythm span:nth-child(1) { animation-delay: .6s; }
@@ -199,7 +199,8 @@
   .duel .tx.wait { font-size: 15px; font-weight: 600; color: var(--muted); }
   .duel .side.win { background: var(--inv-bg); color: var(--inv-ink); }
   .duel .side.win .nm { color: var(--inv-ink); opacity: .7; }
-  .duel .side.win .hs .f, .duel .side.win .hs .th, .duel .side.win .hs .palm { fill: var(--inv-bg); stroke: var(--inv-ink); }
+  .duel .side.win .hs .th, .duel .side.win .hs .palm { fill: var(--inv-bg); stroke: var(--inv-ink); }
+  .duel .side.win .hs .f .o { stroke: var(--inv-ink); } .duel .side.win .hs .f .i { stroke: var(--inv-bg); } .duel .side.win .hs .hole { fill: var(--inv-ink); stroke: var(--inv-ink); }
   .duel .side.win .hs .cuff { fill: var(--inv-ink); }
   .duel .side.lose { opacity: .4; }
   .duel .side.pop .ic { animation: pop .42s var(--ease); }
@@ -227,7 +228,8 @@
   .opt:disabled { opacity: .3; }
   .opt:not(:disabled):active { transform: scale(.94); }
   .opt.sel { background: var(--inv-bg); color: var(--inv-ink); opacity: 1 !important; }
-  .opt.sel .hs .f, .opt.sel .hs .th, .opt.sel .hs .palm { fill: var(--inv-bg); stroke: var(--inv-ink); }
+  .opt.sel .hs .th, .opt.sel .hs .palm { fill: var(--inv-bg); stroke: var(--inv-ink); }
+  .opt.sel .hs .f .o, .opt.sel .hs .hole { stroke: var(--inv-ink); } .opt.sel .hs .f .i { stroke: var(--inv-bg); } .opt.sel .hs .hole { fill: var(--inv-ink); }
   .opt.sel .hs .cuff { fill: var(--inv-ink); }
   .opts .veil {
     position: absolute; inset: 0; border-radius: 18px; background: var(--inv-bg); color: var(--inv-ink);
@@ -414,17 +416,65 @@
   // =====================================================================
   //  DŁOŃ (SVG) — gesty: fist (pięść), one (palec), two (dwa palce), five (dłoń)
   // =====================================================================
-  const handSVG = (g = 'fist', cls = '') => `<svg class="hs ${cls}" viewBox="0 0 260 170" data-g="${g}" aria-hidden="true"><g class="body">
-    <rect class="cuff" x="2" y="50" width="46" height="76" rx="8"/>
-    <rect class="palm" x="34" y="40" width="120" height="100" rx="38"/>
-    <rect class="f f4" x="92" y="116" width="118" height="20" rx="10"/>
-    <rect class="f f3" x="92" y="95" width="138" height="21" rx="10.5"/>
-    <rect class="f f2" x="92" y="73" width="146" height="22" rx="11"/>
-    <rect class="f f1" x="92" y="51" width="150" height="22" rx="11"/>
-    <rect class="th" x="66" y="33" width="68" height="21" rx="10.5"/>
-  </g></svg>`;
-  const GEST_NAME = { fist: 'pięść', one: 'palec', two: 'dwa palce', wall: 'płaska dłoń', sun: 'rozczapierzona', roof: 'daszek', wave: 'fala' };
+  // Palce: środek kapsułki y, grubość w, koniec po wyprostowaniu (x). Krawędź dłoni = EDGE.
+  const FING = [{ y: 62, w: 20, end: 250 }, { y: 84, w: 21, end: 257 }, { y: 105.5, w: 20, end: 246 }, { y: 126, w: 18, end: 226 }];
+  const EDGE = 150, CURL_A = 103, CURL_B = 144;
+  const EXT = { fist: [0,0,0,0], hole: [0,0,0,0], one: [1,0,0,0], two: [1,1,0,0], wall: [1,1,1,1], sun: [1,1,1,1], roof: [1,1,1,1], wave: [1,1,1,1] };
+  const fingerXY = (k, ext) => ext ? [EDGE, FING[k].end] : [CURL_A, CURL_B];
+  const handSVG = (g = 'fist', cls = '') => {
+    const ext = EXT[g] || EXT.fist;
+    const fingers = [3, 2, 1, 0].map(k => {
+      const f = FING[k], [a, b] = fingerXY(k, ext[k]);
+      return `<g class="f f${k + 1}" style="transform-origin:${EDGE}px ${f.y}px">
+        <line class="o" x1="${a}" y1="${f.y}" x2="${b}" y2="${f.y}" stroke-width="${f.w + 12}"/>
+        <line class="i" x1="${a}" y1="${f.y}" x2="${b}" y2="${f.y}" stroke-width="${f.w}"/></g>`;
+    }).join('');
+    return `<svg class="hs ${cls}" viewBox="0 0 260 170" data-g="${g}" aria-hidden="true"><g class="body">
+      <rect class="cuff" x="2" y="50" width="46" height="76" rx="8"/>
+      <rect class="palm" x="34" y="40" width="120" height="100" rx="38"/>
+      ${fingers}
+      <ellipse class="hole" cx="160" cy="80" rx="10" ry="19"/>
+      <rect class="th" x="66" y="33" width="68" height="21" rx="10.5"/>
+    </g></svg>`;
+  };
+  // Zmiana gestu: palec zwija się do kółka przy krawędzi dłoni, potem rośnie poza dłoń (i odwrotnie).
+  function setGesture(svg, g, animate = true) {
+    const from = svg._ext || (EXT[svg.dataset.g] || EXT.fist).slice();
+    const to = EXT[g] || EXT.fist;
+    svg.dataset.g = g; svg._ext = to.slice();
+    const token = (svg._tok = (svg._tok || 0) + 1);
+    FING.forEach((f, k) => {
+      const grp = svg.querySelector('.f' + (k + 1)), lines = grp.querySelectorAll('line');
+      const set = (a, b) => lines.forEach(l => { l.setAttribute('x1', a); l.setAttribute('x2', b); });
+      const [ta, tb] = fingerXY(k, to[k]);
+      if (!animate || from[k] === to[k]) { set(ta, tb); return; }
+      const sa = +lines[0].getAttribute('x1'), sb = +lines[0].getAttribute('x2');
+      const P1 = 110, P2 = 170, delay = k * 22, t0 = performance.now() + delay;
+      const ease = t => 1 - Math.pow(1 - t, 3);
+      const step = now => {
+        if (svg._tok !== token) return;
+        const t = now - t0;
+        if (t < 0) { requestAnimationFrame(step); return; }
+        if (t < P1) { const e = ease(t / P1); set(sa + (EDGE - sa) * e, sb + (EDGE - sb) * e); }
+        else if (t < P1 + P2) { const e = ease((t - P1) / P2); set(EDGE + (ta - EDGE) * e, EDGE + (tb - EDGE) * e); }
+        else { set(ta, tb); return; }
+        requestAnimationFrame(step);
+      };
+      requestAnimationFrame(step);
+    });
+  }
+  window.palmHand = handSVG;   // pomocniczo: podgląd gestów
+  const GEST_NAME = { fist: 'pięść', one: 'palec', two: 'dwa palce', wall: 'płaska dłoń', sun: 'rozczapierzona', roof: 'daszek', wave: 'fala', hole: 'dziurka' };
   $id('heroHand').innerHTML = handSVG('fist');
+  // ekran startowy: na „trzy” wyskakują dwa palce, potem znowu pięść (zsynchronizowane z animacją CSS)
+  (() => {
+    const wrap = $id('heroHand'), svg = wrap.querySelector('.hs');
+    let t1, t2;
+    const cycle = () => { clearTimeout(t1); clearTimeout(t2);
+      t1 = setTimeout(() => setGesture(svg, 'two'), 1800); t2 = setTimeout(() => setGesture(svg, 'fist'), 3150); };
+    wrap.addEventListener('animationstart', e => { if (e.target === wrap) cycle(); });
+    wrap.addEventListener('animationiteration', e => { if (e.target === wrap) cycle(); });
+  })();
   function $id(id) { return document.getElementById(id); }
 
   // =====================================================================
@@ -437,7 +487,7 @@
     V('grecja', 'Grecja · katamaran', [I('Sztorm','⛈️','ze sztormem'), I('Kotwica','⚓','z kotwicą'), I('Katamaran','⛵','z katamaranem')], [0,2, 1,0, 2,1], ['wave','fist','roof']),
     V('portugalia', 'Portugalia', [I('Statek','🚢','ze statkiem'), I('Wieża','🏰','z wieżą'), I('Morze','🌊','z morzem')], [0,1, 1,2, 2,0], ['wall','one','wave']),
     V('narty', 'Ferie na nartach', [I('Narty','🎿','z nartami',1), I('Góra','🏔️','z górą'), I('Człowiek','🧍','z człowiekiem')], [0,1, 1,2, 2,0], ['two','roof','one']),
-    V('laka', 'Wakacje na łące', [I('Marchewka','🥕','z marchewką'), I('Królik','🐇','z królikiem'), I('Norka','🕳️','z norką')], [0,2, 1,0, 2,1], ['one','two','fist']),
+    V('laka', 'Wakacje na łące', [I('Marchewka','🥕','z marchewką'), I('Królik','🐇','z królikiem'), I('Norka','🕳️','z norką')], [0,2, 1,0, 2,1], ['one','two','hole']),
     V('namiot', 'Pod namiotem', [I('Kula','🔮','z kulą'), I('Namiot','⛺','z namiotem'), I('Rękawiczka','🧤','z rękawiczką')], [0,1, 1,2, 2,0], ['fist','roof','sun']),
     V('deszcz', 'Deszczowa pogoda', [I('Deszcz','🌧️','z deszczem'), I('Parasol','☂️','z parasolem'), I('Człowiek','🧍','z człowiekiem')], [0,2, 1,0, 2,1], ['wave','roof','one']),
     V('sushi', 'Kolacja sushi', [I('Sushi','🍣','z sushi'), I('Pałeczki','🥢','z pałeczkami',1), I('Człowiek','🧍','z człowiekiem')], [0,2, 1,0, 2,1], ['fist','two','one']),
@@ -631,7 +681,7 @@
   const handEl = side => side === 'me' ? $('hBot') : $('hTop');
   function setHand(side, i) {          // i: indeks wyboru, null = spóźnienie, undefined = pięść
     const h = handEl(side), svg = h.querySelector('.hs'), badge = h.querySelector('.badge');
-    svg.dataset.g = i == null ? 'fist' : S.variant.g[i];
+    setGesture(svg, i == null ? 'fist' : S.variant.g[i]);
     const showBadge = i != null && !S.variant.classic;
     badge.textContent = showBadge ? S.variant.items[i].e : (i === null ? '⏱️' : '');
     badge.classList.toggle('on', showBadge || i === null);
