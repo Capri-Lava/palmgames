@@ -126,7 +126,7 @@
 <main>
   <header>
     <h1>Kamień<br>Papier <span>Nożyce</span></h1>
-    <p class="sub">Gra na dwa telefony.</p>
+    <p class="sub">Na dwa telefony albo z komputerem.</p>
   </header>
 
   <!-- LOBBY -->
@@ -134,6 +134,7 @@
     <label for="name">Twoje imię</label>
     <input id="name" maxlength="16" placeholder="np. Grzegorz" autocomplete="off">
     <button class="primary" id="btnCreate">Załóż pokój</button>
+    <button class="ghost" id="btnBot">Graj z komputerem 🤖</button>
     <div class="divider">albo dołącz</div>
     <div class="row">
       <input id="joinCode" class="code" maxlength="4" placeholder="KOD" autocomplete="off" autocapitalize="characters">
@@ -194,6 +195,7 @@
 
   // ---------- state ----------
   let peer = null, conn = null, isHost = false, code = null;
+  let vsBot = false, botTimer = null;
   let retryTimer = null, leaving = false;
   const g = {
     round: 1, me: 0, opp: 0,
@@ -296,7 +298,39 @@
     c.on('error', () => { if (!isHost) scheduleRetry(); });
   }
 
-  function send(msg) { if (conn && conn.open) conn.send(msg); }
+  function send(msg) {
+    if (vsBot) return botReceive(msg);
+    if (conn && conn.open) conn.send(msg);
+  }
+
+  // ---------- komputer ----------
+  const botPick = { };
+  function randomHand() {
+    const a = new Uint32Array(1); crypto.getRandomValues(a);
+    return ['r', 'p', 's'][a[0] % 3];
+  }
+  function botThink() {
+    // komputer wybiera niezależnie od gracza, po krótkim „namyśle”
+    const r = g.round;
+    clearTimeout(botTimer);
+    botTimer = setTimeout(() => {
+      if (!vsBot || g.round !== r) return;
+      botPick[r] = randomHand();
+      onData({ t: 'lock', r });
+    }, 500 + Math.random() * 1000);
+  }
+  function botReceive(msg) {
+    if (msg.t === 'reveal' && botPick[msg.r]) {
+      const r = msg.r, c = botPick[r];
+      delete botPick[r];
+      setTimeout(() => vsBot && onData({ t: 'reveal', r, c }), 100);
+    }
+  }
+  function startBot() {
+    store.set('kpn-name', myName());
+    vsBot = true; g.oppName = 'Komputer';
+    startGame();
+  }
 
   function onData(m) {
     if (!m || typeof m !== 'object') return;
@@ -341,6 +375,7 @@
     $('myHand').textContent = '❔'; $('oppHand').textContent = '❔';
     $('myHand').className = 'hand mine'; $('oppHand').className = 'hand';
     if (g.oppLocked[g.round]) $('oppHand').classList.add('locked');
+    if (vsBot) botThink();
     setStatus('Wybierz!', '');
     document.querySelectorAll('.pick').forEach(b => { b.disabled = false; b.classList.remove('sel'); });
   }
@@ -393,7 +428,7 @@
   }
 
   function leave() {
-    leaving = true; clearTimeout(retryTimer);
+    leaving = true; clearTimeout(retryTimer); clearTimeout(botTimer); vsBot = false;
     try { conn && conn.close(); } catch {}
     try { peer && peer.destroy(); } catch {}
     conn = null; peer = null;
@@ -406,6 +441,7 @@
 
   // ---------- UI wiring ----------
   $('btnCreate').onclick = createRoom;
+  $('btnBot').onclick = startBot;
   $('btnJoin').onclick = () => joinRoom($('joinCode').value);
   $('joinCode').addEventListener('keydown', e => { if (e.key === 'Enter') joinRoom($('joinCode').value); });
   $('btnCancel').onclick = leave;
