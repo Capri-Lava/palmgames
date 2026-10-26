@@ -10,7 +10,9 @@
 <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)">
 <meta name="theme-color" content="#0b0b0b" media="(prefers-color-scheme: dark)">
 <title>palm games</title>
-<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='22' fill='black'/><text x='50' y='68' font-size='56' text-anchor='middle' fill='white' font-family='Arial' font-weight='900'>p</text></svg>">
+<link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="manifest" href="manifest.json">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600;800;900&display=swap" rel="stylesheet">
@@ -67,22 +69,20 @@
   .label { font-size: 12px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
   .err { color: var(--ink); font-size: 14px; min-height: 18px; margin: 0; font-weight: 500; }
 
-  /* ---------- WEKTOROWA DŁOŃ ---------- */
+  /* ---------- WEKTOROWA DŁOŃ (z boku, poziomo, kciuk na górze) ---------- */
   .hs { display: block; overflow: visible; }
   .hs .f, .hs .th, .hs .palm { fill: var(--bg); stroke: var(--ink); stroke-width: 6; stroke-linejoin: round; }
   .hs .cuff { fill: var(--ink); }
-  .hs .f, .hs .th { transform-box: fill-box; transform-origin: 50% 100%; transition: transform .2s cubic-bezier(.3,1.45,.5,1); }
-  .hs .f1 { --c: .55; } .hs .f2 { --c: .5; } .hs .f3 { --c: .53; } .hs .f4 { --c: .6; }
-  .hs .f { transform: scaleY(var(--c)); }
-  .hs .th { transform: rotate(62deg); }
+  .hs .f, .hs .th { transform-box: fill-box; transform-origin: 0% 50%; transition: transform .18s cubic-bezier(.3,1.4,.5,1); }
+  .hs .f1 { --c: .533; } .hs .f2 { --c: .548; } .hs .f3 { --c: .55; } .hs .f4 { --c: .56; }
+  .hs .f { transform: scaleX(var(--c)); }
   .hs[data-g="one"] .f1 { transform: none; }
-  .hs[data-g="two"] .f1 { transform: rotate(-10deg); }
-  .hs[data-g="two"] .f2 { transform: rotate(8deg); }
-  .hs[data-g="five"] .f1 { transform: rotate(-17deg); }
-  .hs[data-g="five"] .f2 { transform: rotate(-5deg); }
-  .hs[data-g="five"] .f3 { transform: rotate(6deg); }
-  .hs[data-g="five"] .f4 { transform: rotate(18deg); }
-  .hs[data-g="five"] .th { transform: rotate(-38deg); }
+  .hs[data-g="two"] .f1 { transform: rotate(-8deg); }
+  .hs[data-g="two"] .f2 { transform: rotate(6deg); }
+  .hs[data-g="five"] .f { transform: none; }
+  .hs[data-g="five"] .f1 { transform: rotate(-3deg); }
+  .hs[data-g="five"] .f4 { transform: rotate(3deg); }
+  .hs[data-g="five"] .th { transform: translateX(16px) rotate(-5deg); }
   .hs.static .f, .hs.static .th { transition: none; }
   .hs.thin .f, .hs.thin .th, .hs.thin .palm { stroke-width: 9; }
 
@@ -90,7 +90,7 @@
   .logo { font-size: 22px; letter-spacing: -.03em; margin: 6px 0 0; }
   .logo b { font-weight: 900; } .logo span { font-weight: 400; color: var(--muted); }
   .hero { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 22px; min-height: 220px; }
-  .hero .wrap { width: clamp(120px, 24vh, 180px); transform-origin: 50% 95%; animation: wave 2.4s infinite; }
+  .hero .wrap { width: clamp(170px, 30vh, 240px); transform-origin: 8% 60%; animation: wave 2.4s infinite; }
   @keyframes wave {
     0%    { transform: translateY(0) rotate(0); animation-timing-function: cubic-bezier(.2,.7,.3,1); }
     8.33% { transform: translateY(-22px) rotate(-8deg); animation-timing-function: cubic-bezier(.6,0,.9,.4); }
@@ -104,8 +104,8 @@
   /* na „trzy” wyskakują dwa palce, potem znowu pięść */
   .hero .hs .f1 { animation: v1 2.4s infinite; transition: none; }
   .hero .hs .f2 { animation: v2 2.4s infinite; transition: none; }
-  @keyframes v1 { 0%, 49% { transform: scaleY(var(--c)); } 53%, 86% { transform: rotate(-10deg); } 91%, 100% { transform: scaleY(var(--c)); } }
-  @keyframes v2 { 0%, 49% { transform: scaleY(var(--c)); } 53%, 86% { transform: rotate(8deg); } 91%, 100% { transform: scaleY(var(--c)); } }
+  @keyframes v1 { 0%, 49% { transform: scaleX(var(--c)); } 53%, 86% { transform: rotate(-8deg); } 91%, 100% { transform: scaleX(var(--c)); } }
+  @keyframes v2 { 0%, 49% { transform: scaleX(var(--c)); } 53%, 86% { transform: rotate(6deg); } 91%, 100% { transform: scaleX(var(--c)); } }
   .rhythm { display: flex; gap: 16px; font-weight: 900; font-size: 15px; letter-spacing: .06em; color: var(--line); }
   .rhythm span { animation: beat 2.4s linear infinite; }
   .rhythm span:nth-child(1) { animation-delay: .4s; }
@@ -158,29 +158,35 @@
 
   /* ---------- GAME ---------- */
   .game { padding-left: max(14px, env(safe-area-inset-left)); padding-right: max(14px, env(safe-area-inset-right)); gap: 8px; }
-  .gbar { display: grid; grid-template-columns: 40px 1fr 40px; align-items: center; flex: none; margin: 0 -4px; }
-  .score { display: flex; flex-direction: column; align-items: center; line-height: 1; }
-  .score .nums { display: flex; align-items: baseline; gap: 10px; font-weight: 900; font-size: 34px; letter-spacing: -.03em; }
-  .score .nums i { font-style: normal; color: var(--muted); font-weight: 400; }
-  .score .nums span { min-width: 22px; text-align: center; display: inline-block; }
-  .score .nums span.bump { animation: bump .5s var(--ease); }
-  @keyframes bump { 30% { transform: scale(1.5); } }
-  .score .names { display: flex; gap: 8px; font-size: 12px; color: var(--muted); font-weight: 600; margin-top: 4px; max-width: 70vw; }
-  .score .names span { max-width: 32vw; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-  .vname { text-align: center; font-size: 12px; color: var(--muted); font-weight: 500; margin-top: -2px; flex: none; }
+  .gbar { display: grid; grid-template-columns: 40px 1fr 40px; align-items: center; flex: none; margin: 0 -4px; height: 40px; }
+  .vname { text-align: center; font-size: 13px; color: var(--muted); font-weight: 600; }
 
-  /* rywal (komputer / online) */
-  .rival {
-    flex: none; display: flex; align-items: center; gap: 14px; padding: 12px 16px;
-    border-radius: 20px; background: var(--soft); min-height: 84px; transition: opacity .3s;
+  /* pojedynek: Ty  [gest] wybór   0 : 1   wybór [gest]  Rywal */
+  .duel { flex: none; display: grid; grid-template-columns: 1fr auto 1fr; align-items: stretch; gap: 8px; }
+  .duel .side {
+    border-radius: 18px; background: var(--soft); padding: 10px 12px; min-width: 0;
+    display: flex; flex-direction: column; gap: 6px; transition: background .25s, color .25s, opacity .3s;
   }
-  .rival .vis { width: 58px; height: 58px; display: grid; place-items: center; flex: none; }
-  .rival .vis .hs { width: 46px; }
-  .rival .vis .e { font-size: 44px; }
-  .rival .who { font-size: 13px; font-weight: 600; color: var(--muted); }
-  .rival .what { font-size: 24px; font-weight: 900; letter-spacing: -.02em; line-height: 1.1; }
-  .rival .what.wait { font-size: 17px; font-weight: 600; color: var(--muted); }
-  .rival.pop .vis { animation: pop .42s var(--ease); }
+  .duel .side.opp { align-items: flex-end; text-align: right; }
+  .duel .nm { font-size: 13px; font-weight: 600; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%; }
+  .duel .pk { display: flex; flex-direction: column; align-items: flex-start; gap: 4px; min-height: 64px; max-width: 100%; }
+  .duel .side.opp .pk { align-items: flex-end; }
+  .duel .ic { flex: none; display: grid; place-items: center; width: 46px; height: 30px; }
+  .duel .ic .hs { width: 46px; }
+  .duel .ic .e { font-size: 28px; }
+  .duel .tx { font-size: 19px; font-weight: 900; letter-spacing: -.02em; line-height: 1.05; overflow-wrap: anywhere; }
+  .duel .tx.wait { font-size: 15px; font-weight: 600; color: var(--muted); }
+  .duel .side.win { background: var(--inv-bg); color: var(--inv-ink); }
+  .duel .side.win .nm { color: var(--inv-ink); opacity: .7; }
+  .duel .side.win .hs .f, .duel .side.win .hs .th, .duel .side.win .hs .palm { fill: var(--inv-bg); stroke: var(--inv-ink); }
+  .duel .side.win .hs .cuff { fill: var(--inv-ink); }
+  .duel .side.lose { opacity: .4; }
+  .duel .side.pop .ic { animation: pop .42s var(--ease); }
+  .duel .sc { display: flex; align-items: center; gap: 6px; font-weight: 900; font-size: 34px; letter-spacing: -.03em; padding: 0 2px; }
+  .duel .sc i { font-style: normal; color: var(--muted); font-weight: 400; }
+  .duel .sc span { display: inline-block; min-width: 20px; text-align: center; }
+  .duel .sc span.bump { animation: bump .5s var(--ease); }
+  @keyframes bump { 30% { transform: scale(1.5); } }
   .lost { opacity: .32; }
 
   .panel { flex: none; display: flex; flex-direction: column; gap: 8px; }
@@ -211,10 +217,10 @@
   .half { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 0; gap: clamp(6px, 1.4vh, 14px); position: relative; }
   .half.top { transform: rotate(180deg); }
   .stage:not(.split) .half.top { display: none; }
-  .hand { position: relative; width: clamp(110px, 22vh, 190px); transform-origin: 50% 95%; will-change: transform; transition: opacity .3s; flex: none; }
-  .split .hand { width: clamp(80px, 13vh, 130px); }
+  .hand { position: relative; width: clamp(190px, 62vw, 270px); transform-origin: 8% 60%; will-change: transform; transition: opacity .3s; flex: none; }
+  .split .hand { width: clamp(140px, 42vw, 200px); }
   .hand .badge {
-    position: absolute; right: -14%; top: 4%; width: 44%; aspect-ratio: 1; border-radius: 50%;
+    position: absolute; right: -6%; top: -16%; width: 30%; aspect-ratio: 1; border-radius: 50%;
     background: var(--bg); border: 3px solid var(--ink); display: grid; place-items: center;
     font-size: clamp(22px, 4.4vh, 38px); transform: scale(0); transition: transform .3s cubic-bezier(.3,1.5,.5,1);
   }
@@ -331,18 +337,15 @@
 <section id="game" class="screen game hidden">
   <div class="gbar">
     <button class="icon-btn" id="btnQuit" aria-label="Menu">✕</button>
-    <div class="score">
-      <div class="nums"><span id="scMe">0</span><i>:</i><span id="scOpp">0</span></div>
-      <div class="names"><span id="nmMe"></span><span>·</span><span id="nmOpp"></span></div>
-    </div>
+    <div class="vname" id="vname"></div>
     <button class="icon-btn" id="btnSound" aria-label="Dźwięk">♪</button>
   </div>
-  <div class="vname" id="vname"></div>
 
-  <!-- rywal: komputer / online -->
-  <div class="rival" id="rival">
-    <div class="vis" id="rvVis"></div>
-    <div><div class="who" id="rvWho"></div><div class="what wait" id="rvWhat"></div></div>
+  <!-- kto co zagrał + wynik, w jednej linii -->
+  <div class="duel">
+    <div class="side me" id="dMe"><div class="nm" id="nmMe"></div><div class="pk"><span class="ic" id="icMe"></span><span class="tx wait" id="txMe"></span></div></div>
+    <div class="sc"><span id="scMe">0</span><i>:</i><span id="scOpp">0</span></div>
+    <div class="side opp" id="dOpp"><div class="nm" id="nmOpp"></div><div class="pk"><span class="ic" id="icOpp"></span><span class="tx wait" id="txOpp"></span></div></div>
   </div>
 
   <!-- drugi gracz na tym samym telefonie (obrócony) -->
@@ -390,14 +393,14 @@
   // =====================================================================
   //  DŁOŃ (SVG) — gesty: fist (pięść), one (palec), two (dwa palce), five (dłoń)
   // =====================================================================
-  const handSVG = (g = 'fist', cls = '') => `<svg class="hs ${cls}" viewBox="0 0 200 250" data-g="${g}" aria-hidden="true">
-    <rect class="cuff" x="64" y="206" width="72" height="38" rx="8"/>
-    <rect class="f f1" x="47" y="40" width="25" height="85" rx="12.5"/>
-    <rect class="f f2" x="75" y="30" width="25" height="95" rx="12.5"/>
-    <rect class="f f3" x="103" y="37" width="25" height="88" rx="12.5"/>
-    <rect class="f f4" x="131" y="57" width="22" height="68" rx="11"/>
-    <rect class="palm" x="44" y="100" width="112" height="112" rx="34"/>
-    <rect class="th" x="38" y="118" width="26" height="72" rx="13"/>
+  const handSVG = (g = 'fist', cls = '') => `<svg class="hs ${cls}" viewBox="0 0 260 170" data-g="${g}" aria-hidden="true">
+    <rect class="cuff" x="2" y="50" width="46" height="76" rx="8"/>
+    <rect class="f f1" x="96" y="48" width="150" height="24" rx="12"/>
+    <rect class="f f2" x="96" y="72" width="146" height="23" rx="11.5"/>
+    <rect class="f f3" x="96" y="95" width="138" height="22" rx="11"/>
+    <rect class="f f4" x="96" y="117" width="118" height="20" rx="10"/>
+    <rect class="palm" x="34" y="40" width="120" height="100" rx="38"/>
+    <rect class="th" x="60" y="26" width="98" height="28" rx="14"/>
   </svg>`;
   const GEST = ['fist', 'five', 'two'];   // pozycja 1, 2, 3 w każdym wariancie = pięść, dłoń, dwa palce
   const GEST_NAME = ['pięść', 'dłoń', 'dwa palce'];
@@ -431,8 +434,7 @@
   const WIN_TO = 3;
   const BEAT = 500;                                  // odstęp raz–dwa–trzy
   const WORDS = ['raz', 'dwa', 'trzy'];
-  const LEAD = v => v.classic ? 650 : 1300;          // czas na wybór przed „raz”
-  const GRACE = 450;                                 // spóźnienie dozwolone po „trzy”
+  const windowMs = v => v.classic ? 1700 : 2400;   // linia czasu po „trzy”
   const NEXT = 2600;                                 // pokazanie wyniku przed kolejną rundą
 
   // =====================================================================
@@ -587,10 +589,9 @@
   function layoutGame() {
     $('stage').classList.toggle('split', split());
     $('pTop').classList.toggle('hidden', !split());
-    $('rival').classList.toggle('hidden', split());
     $('vname').textContent = S.variant.name;
     $('nmMe').textContent = S.names.me; $('nmOpp').textContent = S.names.opp;
-    $('nTop').textContent = S.names.opp; $('rvWho').textContent = S.names.opp;
+    $('nTop').textContent = S.names.opp;
     $('hBot').innerHTML = handSVG('fist') + '<div class="badge e"></div>';
     $('hTop').innerHTML = handSVG('fist') + '<div class="badge e"></div>';
     buildOpts($('oBot'), 'me');
@@ -621,17 +622,18 @@
     const h = `<div class="word hit">${w}</div>`;
     sayHTML('me', h); if (split()) sayHTML('opp', h);
   }
-  function rival(state, i) {           // state: 'wait' | 'locked' | 'show'
-    const vis = $('rvVis'), what = $('rvWhat');
-    $('rival').classList.remove('lost', 'pop');
-    if (state === 'show') {
-      vis.innerHTML = i === null ? '<span class="e">⏱️</span>' : itemVis(S.variant, i, true);
-      what.className = 'what'; what.textContent = i === null ? 'Za późno!' : S.variant.items[i].n;
-      void $('rival').offsetWidth; $('rival').classList.add('pop');
+  // pojedynek u góry: state 'empty' | 'wait' | 'locked' | 'mine' | 'show'
+  function duel(side, state, i) {
+    const k = side === 'me' ? 'Me' : 'Opp', box = $('d' + k), ic = $('ic' + k), tx = $('tx' + k);
+    box.classList.remove('win', 'lose', 'pop');
+    if (state === 'show' || state === 'mine') {
+      ic.innerHTML = i === null ? '<span class="e">⏱️</span>' : itemVis(S.variant, i, true);
+      tx.className = 'tx'; tx.textContent = i === null ? 'Za późno' : S.variant.items[i].n;
+      if (state === 'show') { void box.offsetWidth; box.classList.add('pop'); }
     } else {
-      vis.innerHTML = handSVG('fist', 'static');
-      what.className = 'what wait';
-      what.textContent = state === 'locked' ? 'Gotowe ✓' : 'Wybiera…';
+      ic.innerHTML = handSVG('fist', 'static');
+      tx.className = 'tx wait';
+      tx.textContent = state === 'locked' ? 'gotowe ✓' : state === 'wait' ? 'wybiera…' : '';
     }
   }
   function bar(ms) {
@@ -652,7 +654,7 @@
     $('over').classList.add('hidden');
     layoutGame();
     setOpts('me', false); setOpts('opp', false); bar(0);
-    rival('wait'); $('rvWhat').textContent = '';
+    duel('me', 'empty'); duel('opp', 'empty');
     const intro = `<div class="hint">${esc(S.variant.name)} · do ${WIN_TO} punktów</div>`;
     sayHTML('me', intro); sayHTML('opp', split() ? intro : '');
     show('game');
@@ -668,29 +670,25 @@
   function startRound(r) {
     clearTimers();
     S.round = r; S.phase = 'pick';
-    S.me = undefined; S.opp = undefined; S.hit3 = false; S.deadlinePassed = false; S.sent = false;
+    S.me = undefined; S.opp = undefined; S.open = false; S.deadlinePassed = false; S.sent = false;
     if (S.mode === 'online' && r in S.oppReveal) S.opp = S.oppReveal[r];   // rywal mógł być szybszy
     $('tapnext').classList.remove('on');
     ['me', 'opp'].forEach(s => { setHand(s, undefined); handEl(s).classList.remove('lost'); });
-    setOpts('me', true); if (split()) setOpts('opp', true);
-    if (!split()) rival(S.oppLocked[r] ? 'locked' : 'wait');
-    const lead = LEAD(S.variant);
-    const hint = `<div class="hint">wybierz</div>`;
-    sayHTML('me', hint); if (split()) sayHTML('opp', hint);
-    bar(lead + 2 * BEAT + BEAT + GRACE);
-    if (S.mode === 'bot') later(() => choose('opp', rnd(3)), 250 + rnd(lead + 2 * BEAT));
-    later(countdown, lead);
+    setOpts('me', false); setOpts('opp', false); bar(0);
+    duel('me', 'empty');
+    duel('opp', split() ? 'empty' : (S.oppLocked[r] ? 'locked' : 'empty'));
+    sayHTML('me', ''); if (split()) sayHTML('opp', '');
+    later(countdown, 250);
   }
 
-  // Jeden zegar dla ruchu ręki i słów: uderzenie w dół = słowo.
+  // Jeden zegar dla ruchu ręki i słów: uderzenie w dół = słowo. Dwa ruchy pięści.
   function countdown() {
-    const D = 3 * BEAT;
-    const up = 'translateY(-34px) rotate(-9deg)', down = 'translateY(0) rotate(0)';
+    const D = 2 * BEAT;
+    const up = 'translateY(-30px) rotate(-9deg)', down = 'translateY(0) rotate(0)';
     const eUp = 'cubic-bezier(.2,.7,.3,1)', eDown = 'cubic-bezier(.65,0,.95,.45)';
     const frames = [
-      { transform: down, offset: 0, easing: eUp }, { transform: up, offset: 1 / 6, easing: eDown },
-      { transform: down, offset: 2 / 6, easing: eUp }, { transform: up, offset: 3 / 6, easing: eDown },
-      { transform: down, offset: 4 / 6, easing: eUp }, { transform: up, offset: 5 / 6, easing: eDown },
+      { transform: down, offset: 0, easing: eUp }, { transform: up, offset: .25, easing: eDown },
+      { transform: down, offset: .5, easing: eUp }, { transform: up, offset: .75, easing: eDown },
       { transform: down, offset: 1 }
     ];
     const hands = split() ? [$('hBot'), $('hTop')] : [$('hBot')];
@@ -699,36 +697,42 @@
     let fired = 0;
     const loop = () => {
       const t = lead.currentTime == null ? D : lead.currentTime;
-      while (fired < 3 && t >= (fired + 1) * BEAT - 8) { onBeat(fired); fired++; }
-      if (fired < 3) S.raf = requestAnimationFrame(loop);
+      while (fired < 2 && t >= (fired + 1) * BEAT - 8) { onBeat(fired); fired++; }
+      if (fired < 2) S.raf = requestAnimationFrame(loop);
     };
     S.raf = requestAnimationFrame(loop);
+    later(openWindow, D + BEAT * .6);       // „trzy” w rytmie, start linii czasu
   }
 
-  function onBeat(i) {
-    word(WORDS[i]); Snd.tick(i); buzz(i === 2 ? 18 : 8);
-    if (i < 2) return;
-    // TRZY — dłonie się rozwijają
-    S.hit3 = true;
-    if (S.me !== undefined) setHand('me', S.me);
-    if (split() && S.opp !== undefined) setHand('opp', S.opp);
-    later(onDeadline, GRACE);
+  function onBeat(i) { word(WORDS[i]); Snd.tick(i); buzz(8); }
+
+  function openWindow() {
+    if (S.phase !== 'pick') return;
+    S.open = true;
+    word('trzy!'); Snd.tick(2); buzz(18);
+    const ms = windowMs(S.variant);
+    setOpts('me', true); if (split()) setOpts('opp', true);
+    if (!split() && S.opp === undefined && !S.oppLocked[S.round]) duel('opp', 'wait');
+    bar(ms);
+    if (S.mode === 'bot') later(() => choose('opp', rnd(3)), 280 + rnd(Math.max(200, ms - 700)));
+    later(onDeadline, ms);
     checkDone();
   }
 
   function choose(side, i) {
-    if (S.phase !== 'pick' || S.deadlinePassed) return;
+    if (S.phase !== 'pick' || !S.open || S.deadlinePassed) return;
     Snd.unlock();
     if (side === 'me') {
       if (S.me !== undefined) return;
       S.me = i; markChosen('me', i); buzz(12);
-      if (S.hit3) setHand('me', i);
+      setHand('me', i);                                   // dłoń otwiera się w chwili naciśnięcia
+      if (!split()) duel('me', 'mine', i);
       if (S.mode === 'online') { send({ t: 'lock', r: S.round }); tryReveal(); }
     } else {
       if (S.opp !== undefined) return;
       S.opp = i;
-      if (split()) { markChosen('opp', i); buzz(12); if (S.hit3) setHand('opp', i); }
-      else if (S.mode === 'bot') rival('locked');
+      if (split()) { markChosen('opp', i); buzz(12); setHand('opp', i); }
+      else duel('opp', 'locked');
     }
     checkDone();
   }
@@ -738,12 +742,12 @@
     S.deadlinePassed = true;
     if (S.me === undefined) { S.me = null; setOpts('me', false); }
     if (S.mode !== 'online' && S.opp === undefined) { S.opp = null; setOpts('opp', false); }
-    if (S.mode === 'online') { tryReveal(); if (!isDone()) $('rvWhat').textContent = 'Czekam…'; }
+    if (S.mode === 'online') { tryReveal(); if (!isDone()) { $('txOpp').textContent = 'czekam…'; } }
     checkDone();
   }
   const isDone = () => S.me !== undefined && S.opp !== undefined && (S.mode !== 'online' || S.sent);
   function checkDone() {
-    if (S.phase !== 'pick' || !S.hit3 || !isDone()) return;
+    if (S.phase !== 'pick' || !S.open || !isDone()) return;
     clearTimers(); reveal();
   }
 
@@ -763,9 +767,10 @@
     const v = S.variant, it = v.items, w = outcome(S.me, S.opp);
     setTimeout(() => {
       setHand('me', S.me);
-      if (split()) setHand('opp', S.opp); else rival('show', S.opp);
-      if (w === 'me') { S.score.me++; split() ? handEl('opp').classList.add('lost') : $('rival').classList.add('lost'); }
-      if (w === 'opp') { S.score.opp++; handEl('me').classList.add('lost'); }
+      if (split()) setHand('opp', S.opp);
+      duel('me', 'show', S.me); duel('opp', 'show', S.opp);
+      if (w === 'me') { S.score.me++; $('dMe').classList.add('win'); $('dOpp').classList.add('lose'); if (split()) handEl('opp').classList.add('lost'); }
+      if (w === 'opp') { S.score.opp++; $('dOpp').classList.add('win'); $('dMe').classList.add('lose'); handEl('me').classList.add('lost'); }
       renderScore(w === 'me' ? 'me' : w === 'opp' ? 'opp' : null);
 
       // DUŻY napis: co z czym wygrywa
@@ -776,17 +781,12 @@
       else if (w === 'draw') verdict = `Remis — oboje: ${lc(it[S.me].n)}`;
       else { const a = w === 'me' ? it[S.me] : it[S.opp], b = w === 'me' ? it[S.opp] : it[S.me]; verdict = `${a.n} ${a.w} ${b.z}`; }
 
-      const playedLine = side => {
-        const mine = side === 'me' ? S.me : S.opp;
-        if (mine === null) return '';
-        return `${split() ? 'Twój ruch' : 'Ty'}: <b>${esc(it[mine].n)}</b>`;
-      };
       const pointLine = side => {
         if (w === 'draw' || w === 'none') return `<div class="point neutral">Bez punktu</div>`;
         if (w === side) return `<div class="point">+1 dla Ciebie</div>`;
         return `<div class="point neutral">+1 ${esc(S.names[side === 'me' ? 'opp' : 'me'])}</div>`;
       };
-      const block = side => `<div class="played">${playedLine(side)}</div><div class="verdict">${esc(verdict)}</div>${pointLine(side)}`;
+      const block = side => `<div class="verdict">${esc(verdict)}</div>${pointLine(side)}`;
       sayHTML('me', block('me'));
       if (split()) sayHTML('opp', block('opp'));
 
@@ -934,7 +934,7 @@
     switch (m.t) {
       case 'hello':
         S.names.opp = String(m.name || (isHost ? 'Gość' : 'Gospodarz')).slice(0, 16);
-        $('nmOpp').textContent = S.names.opp; $('rvWho').textContent = S.names.opp;
+        $('nmOpp').textContent = S.names.opp; $('nTop').textContent = S.names.opp;
         break;
       case 'full':
         quit(); $('homeErr').textContent = 'Ten pokój jest już pełny.';
@@ -956,7 +956,7 @@
         break;
       case 'lock':
         S.oppLocked[m.r] = true;
-        if (m.r === S.round) { if (S.phase === 'pick') rival('locked'); tryReveal(); checkDone(); }
+        if (m.r === S.round) { if (S.phase === 'pick') duel('opp', 'locked'); tryReveal(); checkDone(); }
         break;
       case 'reveal': {
         const c = m.c === null ? null : (m.c >= 0 && m.c <= 2 ? m.c | 0 : null);
