@@ -1,0 +1,438 @@
+<!doctype html>
+<html lang="pl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="KPN">
+<meta name="theme-color" content="#f4efe6">
+<title>Kamień Papier Nożyce</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>✌️</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #f4efe6;
+    --card: #fffaf2;
+    --ink: #1f1a14;
+    --muted: #7a6f62;
+    --line: #e3d9c9;
+    --accent: #d9542b;
+    --accent-ink: #fff;
+    --win: #2f8f5b;
+    --lose: #c23b3b;
+    --draw: #8a7a5c;
+    --shadow: 0 1px 0 rgba(0,0,0,.04), 0 8px 24px -12px rgba(60,40,20,.25);
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #17140f; --card: #221e17; --ink: #f3ece0; --muted: #a59a89;
+      --line: #3a3328; --accent: #ef6f45; --win: #4cc283; --lose: #ef6262; --draw: #b9a988;
+      --shadow: 0 8px 24px -12px rgba(0,0,0,.6);
+    }
+  }
+  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  html, body { margin: 0; height: 100%; }
+  body {
+    background: var(--bg); color: var(--ink);
+    font: 16px/1.4 Inter, system-ui, -apple-system, sans-serif;
+    padding: max(16px, env(safe-area-inset-top)) max(16px, env(safe-area-inset-right))
+             max(16px, env(safe-area-inset-bottom)) max(16px, env(safe-area-inset-left));
+    display: flex; justify-content: center;
+    -webkit-user-select: none; user-select: none;
+  }
+  main { width: 100%; max-width: 440px; display: flex; flex-direction: column; gap: 16px; }
+  h1 {
+    font-family: Fraunces, Georgia, serif; font-weight: 800; font-size: 32px;
+    line-height: 1.05; margin: 8px 0 0; letter-spacing: -.02em;
+  }
+  h1 span { color: var(--accent); }
+  .sub { color: var(--muted); margin: 0; }
+  .card {
+    background: var(--card); border: 1px solid var(--line); border-radius: 20px;
+    padding: 20px; box-shadow: var(--shadow);
+    display: flex; flex-direction: column; gap: 12px;
+  }
+  label { font-size: 13px; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: .06em; }
+  input {
+    font: inherit; font-size: 18px; color: var(--ink); background: var(--bg);
+    border: 1px solid var(--line); border-radius: 12px; padding: 12px 14px; width: 100%;
+    -webkit-user-select: text; user-select: text;
+  }
+  input.code { text-transform: uppercase; letter-spacing: .3em; font-weight: 600; text-align: center; }
+  button {
+    font: inherit; font-weight: 600; font-size: 17px; border: 0; border-radius: 14px;
+    padding: 14px 16px; cursor: pointer; transition: transform .08s, opacity .2s;
+  }
+  button:active { transform: scale(.97); }
+  button:disabled { opacity: .45; cursor: default; }
+  .primary { background: var(--accent); color: var(--accent-ink); }
+  .ghost { background: transparent; color: var(--ink); border: 1px solid var(--line); }
+  .row { display: flex; gap: 8px; }
+  .row > * { flex: 1; }
+  .divider { display: flex; align-items: center; gap: 10px; color: var(--muted); font-size: 13px; }
+  .divider::before, .divider::after { content: ""; flex: 1; height: 1px; background: var(--line); }
+  .bigcode {
+    font-family: Fraunces, Georgia, serif; font-weight: 800; font-size: 56px;
+    letter-spacing: .12em; text-align: center; margin: 4px 0;
+  }
+  .err { color: var(--lose); font-size: 14px; min-height: 1em; margin: 0; }
+  .hidden { display: none !important; }
+
+  /* game */
+  .score {
+    display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; gap: 8px;
+  }
+  .player { text-align: center; }
+  .player .name { font-size: 13px; color: var(--muted); font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .player .pts { font-family: Fraunces, Georgia, serif; font-size: 44px; font-weight: 800; line-height: 1; }
+  .vs { color: var(--muted); font-size: 13px; }
+  .arena {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 12px; text-align: center;
+  }
+  .hand {
+    aspect-ratio: 1; border-radius: 18px; background: var(--bg); border: 1px dashed var(--line);
+    display: flex; align-items: center; justify-content: center; font-size: 64px; position: relative;
+  }
+  .hand.locked::after {
+    content: "✓ wybrał"; position: absolute; bottom: 8px; font-size: 12px; color: var(--win); font-weight: 600;
+  }
+  .hand.mine.locked::after { content: "✓ wybrano"; }
+  .hand.pop { animation: pop .35s ease-out; }
+  @keyframes pop { 0% { transform: scale(.6); } 70% { transform: scale(1.1); } 100% { transform: scale(1); } }
+  .hand.shake { animation: shake .6s ease-in-out; }
+  @keyframes shake { 0%,100% { transform: translateY(0); } 25%,75% { transform: translateY(-10px); } 50% { transform: translateY(4px); } }
+  .status { text-align: center; font-weight: 600; min-height: 1.4em; margin: 0; }
+  .status.win { color: var(--win); } .status.lose { color: var(--lose); } .status.draw { color: var(--draw); }
+  .picks { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+  .pick {
+    background: var(--card); border: 1px solid var(--line); box-shadow: var(--shadow);
+    font-size: 44px; padding: 14px 0 10px; display: flex; flex-direction: column; align-items: center; gap: 2px;
+  }
+  .pick small { font-size: 12px; color: var(--muted); font-weight: 600; }
+  .pick.sel { border-color: var(--accent); outline: 2px solid var(--accent); }
+  .banner {
+    background: var(--ink); color: var(--bg); border-radius: 12px; padding: 10px 14px;
+    font-size: 14px; text-align: center;
+  }
+  .foot { text-align: center; font-size: 13px; color: var(--muted); }
+  .foot a { color: inherit; }
+</style>
+</head>
+<body>
+<main>
+  <header>
+    <h1>Kamień<br>Papier <span>Nożyce</span></h1>
+    <p class="sub">Gra na dwa telefony.</p>
+  </header>
+
+  <!-- LOBBY -->
+  <section id="lobby" class="card">
+    <label for="name">Twoje imię</label>
+    <input id="name" maxlength="16" placeholder="np. Grzegorz" autocomplete="off">
+    <button class="primary" id="btnCreate">Załóż pokój</button>
+    <div class="divider">albo dołącz</div>
+    <div class="row">
+      <input id="joinCode" class="code" maxlength="4" placeholder="KOD" autocomplete="off" autocapitalize="characters">
+      <button class="ghost" id="btnJoin">Dołącz</button>
+    </div>
+    <p class="err" id="lobbyErr"></p>
+  </section>
+
+  <!-- WAITING (host) -->
+  <section id="waiting" class="card hidden">
+    <label>Kod pokoju</label>
+    <div class="bigcode" id="roomCode">····</div>
+    <p class="sub" style="text-align:center">Wyślij link drugiej osobie albo podyktuj kod.</p>
+    <button class="primary" id="btnShare">Wyślij link</button>
+    <p class="status" id="waitStatus">Czekam na przeciwnika…</p>
+    <button class="ghost" id="btnCancel">Anuluj</button>
+  </section>
+
+  <!-- GAME -->
+  <section id="game" class="hidden" style="display:flex;flex-direction:column;gap:16px">
+    <div id="banner" class="banner hidden"></div>
+    <div class="card">
+      <div class="score">
+        <div class="player"><div class="name" id="meName">Ty</div><div class="pts" id="meScore">0</div></div>
+        <div class="vs">runda <b id="roundNo">1</b></div>
+        <div class="player"><div class="name" id="oppName">Przeciwnik</div><div class="pts" id="oppScore">0</div></div>
+      </div>
+      <div class="arena">
+        <div class="hand mine" id="myHand">❔</div>
+        <div class="hand" id="oppHand">❔</div>
+      </div>
+      <p class="status" id="status">Wybierz!</p>
+    </div>
+    <div class="picks">
+      <button class="pick" data-c="r">✊<small>kamień</small></button>
+      <button class="pick" data-c="p">✋<small>papier</small></button>
+      <button class="pick" data-c="s">✌️<small>nożyce</small></button>
+    </div>
+    <button class="ghost" id="btnLeave">Wyjdź z gry</button>
+  </section>
+
+  <p class="foot"><a href="../">palmgames</a></p>
+</main>
+
+<script src="https://cdn.jsdelivr.net/npm/peerjs@1.5.4/dist/peerjs.min.js"></script>
+<script>
+(() => {
+  const PREFIX = 'palmgames-kpn-';
+  const ALPH = 'ABCDEFGHJKMNPQRSTUVWXYZ23456789';
+  const EMOJI = { r: '✊', p: '✋', s: '✌️' };
+  const BEATS = { r: 's', p: 'r', s: 'p' };
+
+  const $ = id => document.getElementById(id);
+  const store = {
+    get(k) { try { return localStorage.getItem(k); } catch { return null; } },
+    set(k, v) { try { localStorage.setItem(k, v); } catch {} }
+  };
+
+  // ---------- state ----------
+  let peer = null, conn = null, isHost = false, code = null;
+  let retryTimer = null, leaving = false;
+  const g = {
+    round: 1, me: 0, opp: 0,
+    myPick: null, sentReveal: false,
+    oppLocked: {}, oppReveal: {},
+    resolved: false, oppName: 'Przeciwnik'
+  };
+
+  $('name').value = store.get('kpn-name') || '';
+  const myName = () => ($('name').value.trim() || 'Gracz').slice(0, 16);
+
+  // ---------- screens ----------
+  function show(id) {
+    for (const s of ['lobby', 'waiting', 'game']) $(s).classList.toggle('hidden', s !== id);
+  }
+  function banner(text) {
+    $('banner').textContent = text || '';
+    $('banner').classList.toggle('hidden', !text);
+  }
+
+  // ---------- networking ----------
+  function randomCode() {
+    let c = ''; for (let i = 0; i < 4; i++) c += ALPH[Math.floor(Math.random() * ALPH.length)];
+    return c;
+  }
+
+  function createRoom() {
+    store.set('kpn-name', myName());
+    isHost = true; code = randomCode();
+    $('roomCode').textContent = code;
+    $('waitStatus').textContent = 'Łączę z serwerem…';
+    show('waiting');
+    peer = new Peer(PREFIX + code);
+    peer.on('open', () => { $('waitStatus').textContent = 'Czekam na przeciwnika…'; });
+    peer.on('connection', c => {
+      if (conn && conn.open) { c.on('open', () => { c.send({ t: 'full' }); setTimeout(() => c.close(), 300); }); return; }
+      attach(c);
+    });
+    peer.on('disconnected', () => { if (!leaving) setTimeout(() => peer && !peer.destroyed && peer.reconnect(), 1000); });
+    peer.on('error', e => {
+      if (e.type === 'unavailable-id') { peer.destroy(); createRoom(); return; }
+      $('waitStatus').textContent = 'Błąd: ' + e.type;
+    });
+    history.replaceState(null, '', location.pathname);
+  }
+
+  function joinRoom(c) {
+    c = (c || '').toUpperCase().replace(/[^A-Z0-9]/g, '');
+    if (c.length !== 4) { $('lobbyErr').textContent = 'Kod ma 4 znaki.'; return; }
+    store.set('kpn-name', myName());
+    isHost = false; code = c;
+    $('lobbyErr').textContent = 'Łączę…';
+    if (!peer || peer.destroyed) {
+      peer = new Peer();
+      peer.on('open', () => connectToHost());
+      peer.on('disconnected', () => { if (!leaving) setTimeout(() => peer && !peer.destroyed && peer.reconnect(), 1000); });
+      peer.on('error', e => {
+        if (e.type === 'peer-unavailable') {
+          if ($('game').classList.contains('hidden')) { $('lobbyErr').textContent = 'Nie ma pokoju o kodzie ' + code + '.'; }
+          else scheduleRetry();
+        } else if ($('game').classList.contains('hidden')) {
+          $('lobbyErr').textContent = 'Błąd połączenia (' + e.type + ').';
+        }
+      });
+    } else connectToHost();
+  }
+
+  function connectToHost() {
+    clearTimeout(retryTimer);
+    const c = peer.connect(PREFIX + code, { reliable: true });
+    attach(c);
+  }
+
+  function scheduleRetry() {
+    clearTimeout(retryTimer);
+    if (leaving || isHost) return;
+    retryTimer = setTimeout(() => {
+      if (peer && peer.disconnected && !peer.destroyed) peer.reconnect();
+      if (peer && !peer.disconnected) connectToHost(); else scheduleRetry();
+    }, 2500);
+  }
+
+  function attach(c) {
+    conn = c;
+    c.on('open', () => {
+      if (conn !== c) return;
+      banner('');
+      $('lobbyErr').textContent = '';
+      c.send({ t: 'hello', name: myName() });
+      if (isHost) c.send({ t: 'sync', round: g.round, me: g.opp, opp: g.me });
+      if ($('game').classList.contains('hidden')) startGame();
+      else resetRound(); // po ponownym połączeniu zaczynamy rundę od nowa
+    });
+    c.on('data', onData);
+    c.on('close', () => {
+      if (conn !== c || leaving) return;
+      banner(isHost ? 'Przeciwnik się rozłączył — czekam, aż wróci…' : 'Połączenie zerwane — łączę ponownie…');
+      if (!isHost) scheduleRetry();
+    });
+    c.on('error', () => { if (!isHost) scheduleRetry(); });
+  }
+
+  function send(msg) { if (conn && conn.open) conn.send(msg); }
+
+  function onData(m) {
+    if (!m || typeof m !== 'object') return;
+    switch (m.t) {
+      case 'hello':
+        g.oppName = String(m.name || 'Przeciwnik').slice(0, 16);
+        $('oppName').textContent = g.oppName;
+        break;
+      case 'full':
+        leaving = true; peer && peer.destroy(); show('lobby');
+        $('lobbyErr').textContent = 'Ten pokój jest już pełny.';
+        setTimeout(() => leaving = false, 500);
+        break;
+      case 'sync':
+        g.round = m.round; g.me = m.me; g.opp = m.opp;
+        resetRound();
+        break;
+      case 'lock':
+        g.oppLocked[m.r] = true;
+        if (m.r === g.round) { $('oppHand').classList.add('locked'); maybeReveal(); }
+        break;
+      case 'reveal':
+        if (!['r', 'p', 's'].includes(m.c)) return;
+        g.oppReveal[m.r] = m.c;
+        if (m.r === g.round) maybeResolve();
+        break;
+    }
+  }
+
+  // ---------- game ----------
+  function startGame() {
+    $('meName').textContent = myName();
+    $('oppName').textContent = g.oppName;
+    show('game');
+    resetRound();
+  }
+
+  function resetRound() {
+    g.myPick = null; g.sentReveal = false; g.resolved = false;
+    $('roundNo').textContent = g.round;
+    $('meScore').textContent = g.me; $('oppScore').textContent = g.opp;
+    $('myHand').textContent = '❔'; $('oppHand').textContent = '❔';
+    $('myHand').className = 'hand mine'; $('oppHand').className = 'hand';
+    if (g.oppLocked[g.round]) $('oppHand').classList.add('locked');
+    setStatus('Wybierz!', '');
+    document.querySelectorAll('.pick').forEach(b => { b.disabled = false; b.classList.remove('sel'); });
+  }
+
+  function setStatus(t, cls) { const s = $('status'); s.textContent = t; s.className = 'status ' + (cls || ''); }
+
+  function pick(c) {
+    if (g.resolved) { g.round++; resetRound(); } // wybór po wyniku = kolejna runda
+    if (g.myPick) return;
+    g.myPick = c;
+    document.querySelectorAll('.pick').forEach(b => { b.classList.toggle('sel', b.dataset.c === c); b.disabled = true; });
+    $('myHand').textContent = EMOJI[c];
+    $('myHand').classList.add('locked', 'pop');
+    if (navigator.vibrate) navigator.vibrate(15);
+    send({ t: 'lock', r: g.round });
+    setStatus(g.oppLocked[g.round] ? 'Odsłaniam…' : 'Czekam na ' + g.oppName + '…', '');
+    maybeReveal();
+  }
+
+  function maybeReveal() {
+    if (g.myPick && g.oppLocked[g.round] && !g.sentReveal) {
+      g.sentReveal = true;
+      send({ t: 'reveal', r: g.round, c: g.myPick });
+      maybeResolve();
+    }
+  }
+
+  function maybeResolve() {
+    const opp = g.oppReveal[g.round];
+    if (!g.sentReveal || !opp || g.resolved) return;
+    g.resolved = true;
+    const me = g.myPick;
+    const oh = $('oppHand'), mh = $('myHand');
+    oh.classList.remove('locked'); mh.classList.remove('locked', 'pop');
+    oh.textContent = '✊'; mh.textContent = '✊';
+    oh.classList.add('shake'); mh.classList.add('shake');
+    setStatus('Kamień… papier… nożyce!', '');
+    setTimeout(() => {
+      oh.classList.remove('shake'); mh.classList.remove('shake');
+      oh.textContent = EMOJI[opp]; mh.textContent = EMOJI[me];
+      oh.classList.add('pop'); mh.classList.add('pop');
+      if (me === opp) setStatus('Remis!', 'draw');
+      else if (BEATS[me] === opp) { g.me++; setStatus('Wygrywasz! 🎉', 'win'); if (navigator.vibrate) navigator.vibrate([20, 40, 20]); }
+      else { g.opp++; setStatus('Wygrywa ' + g.oppName, 'lose'); }
+      $('meScore').textContent = g.me; $('oppScore').textContent = g.opp;
+      delete g.oppLocked[g.round]; delete g.oppReveal[g.round];
+      document.querySelectorAll('.pick').forEach(b => { b.disabled = false; b.classList.remove('sel'); });
+      setTimeout(() => { if (g.resolved) $('status').textContent += ' · wybierz, by grać dalej'; }, 900);
+    }, 650);
+  }
+
+  function leave() {
+    leaving = true; clearTimeout(retryTimer);
+    try { conn && conn.close(); } catch {}
+    try { peer && peer.destroy(); } catch {}
+    conn = null; peer = null;
+    Object.assign(g, { round: 1, me: 0, opp: 0, oppLocked: {}, oppReveal: {}, oppName: 'Przeciwnik' });
+    banner(''); $('lobbyErr').textContent = '';
+    history.replaceState(null, '', location.pathname);
+    show('lobby');
+    setTimeout(() => leaving = false, 500);
+  }
+
+  // ---------- UI wiring ----------
+  $('btnCreate').onclick = createRoom;
+  $('btnJoin').onclick = () => joinRoom($('joinCode').value);
+  $('joinCode').addEventListener('keydown', e => { if (e.key === 'Enter') joinRoom($('joinCode').value); });
+  $('btnCancel').onclick = leave;
+  $('btnLeave').onclick = () => { if (confirm('Wyjść z gry?')) leave(); };
+  document.querySelectorAll('.pick').forEach(b => b.onclick = () => pick(b.dataset.c));
+
+  $('btnShare').onclick = async () => {
+    const url = location.origin + location.pathname + '?pokoj=' + code;
+    const text = 'Zagraj ze mną w kamień-papier-nożyce! Kod: ' + code;
+    if (navigator.share) { try { await navigator.share({ title: 'Kamień Papier Nożyce', text, url }); } catch {} }
+    else {
+      try { await navigator.clipboard.writeText(url); $('btnShare').textContent = 'Skopiowano link ✓'; }
+      catch { prompt('Skopiuj link:', url); }
+    }
+  };
+
+  // iOS usypia połączenia w tle — po powrocie do karty odświeżamy
+  document.addEventListener('visibilitychange', () => {
+    if (document.visibilityState !== 'visible' || !peer || leaving) return;
+    if (peer.disconnected && !peer.destroyed) peer.reconnect();
+    if (!isHost && !(conn && conn.open) && !$('game').classList.contains('hidden')) scheduleRetry();
+  });
+
+  // dołączanie z linku ?pokoj=KOD
+  const fromLink = new URLSearchParams(location.search).get('pokoj');
+  if (fromLink) { $('joinCode').value = fromLink.toUpperCase(); if (store.get('kpn-name')) joinRoom(fromLink); else $('name').focus(); }
+})();
+</script>
+</body>
+</html>
