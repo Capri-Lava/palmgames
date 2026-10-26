@@ -69,28 +69,49 @@
   .label { font-size: 12px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
   .err { color: var(--ink); font-size: 14px; min-height: 18px; margin: 0; font-weight: 500; }
 
-  /* ---------- WEKTOROWA DŁOŃ (z boku, poziomo, kciuk na górze) ---------- */
+  /* ---------- WEKTOROWA DŁOŃ (z boku, od środka: kciuk na górze, pod nim 4 palce) ---------- */
   .hs { display: block; overflow: visible; }
   .hs .f, .hs .th, .hs .palm { fill: var(--bg); stroke: var(--ink); stroke-width: 6; stroke-linejoin: round; }
   .hs .cuff { fill: var(--ink); }
-  .hs .f, .hs .th { transform-box: fill-box; transform-origin: 0% 50%; transition: transform .18s cubic-bezier(.3,1.4,.5,1); }
-  .hs .f1 { --c: .533; } .hs .f2 { --c: .548; } .hs .f3 { --c: .55; } .hs .f4 { --c: .56; }
+  .hs .body { transform-box: view-box; transform-origin: 40px 90px; transition: transform .28s cubic-bezier(.3,1.3,.5,1); }
+  .hs .f, .hs .th { transform-box: fill-box; transform-origin: 0% 50%; transition: transform .2s cubic-bezier(.3,1.4,.5,1); }
+  .hs .f1 { --c: .427; } .hs .f2 { --c: .438; } .hs .f3 { --c: .45; } .hs .f4 { --c: .49; }
   .hs .f { transform: scaleX(var(--c)); }
+  /* palec */
   .hs[data-g="one"] .f1 { transform: none; }
-  .hs[data-g="two"] .f1 { transform: rotate(-8deg); }
-  .hs[data-g="two"] .f2 { transform: rotate(6deg); }
-  .hs[data-g="five"] .f { transform: none; }
-  .hs[data-g="five"] .f1 { transform: rotate(-3deg); }
-  .hs[data-g="five"] .f4 { transform: rotate(3deg); }
-  .hs[data-g="five"] .th { transform: translateX(16px) rotate(-5deg); }
-  .hs.static .f, .hs.static .th { transition: none; }
+  /* dwa palce */
+  .hs[data-g="two"] .f1 { transform: rotate(-9deg); }
+  .hs[data-g="two"] .f2 { transform: rotate(7deg); }
+  /* ściana — palce złożone razem */
+  .hs[data-g="wall"] .f { transform: none; }
+  .hs[data-g="wall"] .th { transform: translateX(14px); }
+  /* słońce — szeroko rozczapierzone */
+  .hs[data-g="sun"] .f1 { transform: rotate(-30deg); }
+  .hs[data-g="sun"] .f2 { transform: rotate(-10deg); }
+  .hs[data-g="sun"] .f3 { transform: rotate(10deg); }
+  .hs[data-g="sun"] .f4 { transform: rotate(30deg); }
+  .hs[data-g="sun"] .th { transform: translate(-6px, -4px) rotate(-38deg); }
+  /* daszek — dłoń obrócona, palce w dół jak dach / parasol / góra */
+  .hs[data-g="roof"] .body { transform: rotate(-30deg); }
+  .hs[data-g="roof"] .f { transform: translateX(46px) rotate(64deg); }
+  .hs[data-g="roof"] .th { transform: translateX(12px); }
+  /* fala — płaska dłoń, która faluje */
+  .hs[data-g="wave"] .f { transform: none; }
+  .hs[data-g="wave"] .th { transform: translateX(14px); }
+  .hs[data-g="wave"] .body { animation: wv 1.3s ease-in-out infinite; }
+  .hs[data-g="wave"] .f { animation: wvf 1.3s ease-in-out infinite; }
+  @keyframes wv { 0%, 100% { transform: rotate(-12deg); } 50% { transform: rotate(10deg); } }
+  @keyframes wvf { 0%, 100% { transform: rotate(18deg); } 50% { transform: rotate(-16deg); } }
+  .hs.static[data-g="wave"] .body { animation: none; transform: rotate(-10deg); }
+  .hs.static[data-g="wave"] .f { animation: none; transform: rotate(16deg); }
+  .hs.static .f, .hs.static .th, .hs.static .body { transition: none; }
   .hs.thin .f, .hs.thin .th, .hs.thin .palm { stroke-width: 9; }
 
   /* ---------- HOME ---------- */
   .logo { font-size: 22px; letter-spacing: -.03em; margin: 6px 0 0; }
   .logo b { font-weight: 900; } .logo span { font-weight: 400; color: var(--muted); }
   .hero { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 22px; min-height: 220px; }
-  .hero .wrap { width: clamp(170px, 30vh, 240px); transform-origin: 8% 60%; animation: wave 2.4s infinite; }
+  .hero .wrap { width: clamp(170px, 30vh, 240px); transform-origin: 8% 60%; animation: wave 3.6s infinite; }
   @keyframes wave {
     0%    { transform: translateY(0) rotate(0); animation-timing-function: cubic-bezier(.2,.7,.3,1); }
     8.33% { transform: translateY(-22px) rotate(-8deg); animation-timing-function: cubic-bezier(.6,0,.9,.4); }
@@ -102,15 +123,15 @@
     100%  { transform: translateY(0) rotate(0); }
   }
   /* na „trzy” wyskakują dwa palce, potem znowu pięść */
-  .hero .hs .f1 { animation: v1 2.4s infinite; transition: none; }
-  .hero .hs .f2 { animation: v2 2.4s infinite; transition: none; }
-  @keyframes v1 { 0%, 49% { transform: scaleX(var(--c)); } 53%, 86% { transform: rotate(-8deg); } 91%, 100% { transform: scaleX(var(--c)); } }
-  @keyframes v2 { 0%, 49% { transform: scaleX(var(--c)); } 53%, 86% { transform: rotate(6deg); } 91%, 100% { transform: scaleX(var(--c)); } }
+  .hero .hs .f1 { animation: v1 3.6s infinite; transition: none; }
+  .hero .hs .f2 { animation: v2 3.6s infinite; transition: none; }
+  @keyframes v1 { 0%, 49% { transform: scaleX(var(--c)); } 52%, 86% { transform: rotate(-9deg); } 91%, 100% { transform: scaleX(var(--c)); } }
+  @keyframes v2 { 0%, 49% { transform: scaleX(var(--c)); } 52%, 86% { transform: rotate(7deg); } 91%, 100% { transform: scaleX(var(--c)); } }
   .rhythm { display: flex; gap: 16px; font-weight: 900; font-size: 15px; letter-spacing: .06em; color: var(--line); }
-  .rhythm span { animation: beat 2.4s linear infinite; }
-  .rhythm span:nth-child(1) { animation-delay: .4s; }
-  .rhythm span:nth-child(2) { animation-delay: .8s; }
-  .rhythm span:nth-child(3) { animation-delay: 1.2s; }
+  .rhythm span { animation: beat 3.6s linear infinite; }
+  .rhythm span:nth-child(1) { animation-delay: .6s; }
+  .rhythm span:nth-child(2) { animation-delay: 1.2s; }
+  .rhythm span:nth-child(3) { animation-delay: 1.8s; }
   @keyframes beat { 0%, 14% { color: var(--ink); } 20%, 100% { color: var(--line); } }
   .menu { display: flex; flex-direction: column; }
   .row-btn {
@@ -393,17 +414,16 @@
   // =====================================================================
   //  DŁOŃ (SVG) — gesty: fist (pięść), one (palec), two (dwa palce), five (dłoń)
   // =====================================================================
-  const handSVG = (g = 'fist', cls = '') => `<svg class="hs ${cls}" viewBox="0 0 260 170" data-g="${g}" aria-hidden="true">
+  const handSVG = (g = 'fist', cls = '') => `<svg class="hs ${cls}" viewBox="0 0 260 170" data-g="${g}" aria-hidden="true"><g class="body">
     <rect class="cuff" x="2" y="50" width="46" height="76" rx="8"/>
-    <rect class="f f1" x="96" y="48" width="150" height="24" rx="12"/>
-    <rect class="f f2" x="96" y="72" width="146" height="23" rx="11.5"/>
-    <rect class="f f3" x="96" y="95" width="138" height="22" rx="11"/>
-    <rect class="f f4" x="96" y="117" width="118" height="20" rx="10"/>
     <rect class="palm" x="34" y="40" width="120" height="100" rx="38"/>
-    <rect class="th" x="60" y="26" width="98" height="28" rx="14"/>
-  </svg>`;
-  const GEST = ['fist', 'five', 'two'];   // pozycja 1, 2, 3 w każdym wariancie = pięść, dłoń, dwa palce
-  const GEST_NAME = ['pięść', 'dłoń', 'dwa palce'];
+    <rect class="f f4" x="92" y="116" width="118" height="20" rx="10"/>
+    <rect class="f f3" x="92" y="95" width="138" height="21" rx="10.5"/>
+    <rect class="f f2" x="92" y="73" width="146" height="22" rx="11"/>
+    <rect class="f f1" x="92" y="51" width="150" height="22" rx="11"/>
+    <rect class="th" x="66" y="33" width="68" height="21" rx="10.5"/>
+  </g></svg>`;
+  const GEST_NAME = { fist: 'pięść', one: 'palec', two: 'dwa palce', wall: 'płaska dłoń', sun: 'rozczapierzona', roof: 'daszek', wave: 'fala' };
   $id('heroHand').innerHTML = handSVG('fist');
   function $id(id) { return document.getElementById(id); }
 
@@ -411,30 +431,29 @@
   //  WARIANTY
   // =====================================================================
   const I = (n, e, z, plural) => ({ n, e, z, w: plural ? 'wygrywają' : 'wygrywa' });
-  const V = (id, name, items, beats) => ({ id, name, items, beats });
+  const V = (id, name, items, beats, g) => ({ id, name, items, beats, g });
   const VARIANTS = [
-    V('classic', 'Klasyczne', [I('Kamień','✊','z kamieniem'), I('Papier','✋','z papierem'), I('Nożyce','✌️','z nożycami',1)], [0,2, 1,0, 2,1]),
-    V('grecja', 'Grecja · katamaran', [I('Sztorm','⛈️','ze sztormem'), I('Kotwica','⚓','z kotwicą'), I('Katamaran','⛵','z katamaranem')], [0,2, 1,0, 2,1]),
-    V('portugalia', 'Portugalia', [I('Statek','🚢','ze statkiem'), I('Wieża','🏰','z wieżą'), I('Morze','🌊','z morzem')], [0,1, 1,2, 2,0]),
-    V('narty', 'Ferie na nartach', [I('Narty','🎿','z nartami',1), I('Góra','🏔️','z górą'), I('Człowiek','🧍','z człowiekiem')], [0,1, 1,2, 2,0]),
-    V('laka', 'Wakacje na łące', [I('Marchewka','🥕','z marchewką'), I('Królik','🐇','z królikiem'), I('Norka','🕳️','z norką')], [0,2, 1,0, 2,1]),
-    V('namiot', 'Pod namiotem', [I('Kula','🔮','z kulą'), I('Namiot','⛺','z namiotem'), I('Rękawiczka','🧤','z rękawiczką')], [0,1, 1,2, 2,0]),
-    V('deszcz', 'Deszczowa pogoda', [I('Deszcz','🌧️','z deszczem'), I('Parasol','☂️','z parasolem'), I('Człowiek','🧍','z człowiekiem')], [0,2, 1,0, 2,1]),
-    V('sushi', 'Kolacja sushi', [I('Sushi','🍣','z sushi'), I('Pałeczki','🥢','z pałeczkami',1), I('Człowiek','🧍','z człowiekiem')], [0,2, 1,0, 2,1]),
-    V('zima', 'Zima', [I('Śnieg','❄️','ze śniegiem'), I('Słońce','☀️','ze słońcem'), I('Okulary','🕶️','z okularami',1)], [0,2, 1,0, 2,1]),
-    V('singapur', 'Singapur', [I('Lew morski','🦭','z lwem morskim'), I('Pożar','🔥','z pożarem'), I('Kłoda','🪵','z kłodą')], [0,1, 1,2, 2,0]),
-    V('bali', 'Bali', [I('Deska','🏄','z deską'), I('Człowiek','🧍','z człowiekiem'), I('Fala','🌊','z falą')], [0,2, 1,0, 2,1]),
-    V('japonia', 'Japonia', [I('Daniel','🦌','z danielem'), I('Człowiek','🧍','z człowiekiem'), I('Samochód','🚗','z samochodem')], [0,1, 1,2, 2,0]),
-    V('jurassic', 'Jurassic Park', [I('T-Rex','🦖','z T-Reksem'), I('Bakterie','🦠','z bakteriami',1), I('Człowiek','🧍','z człowiekiem')], [0,2, 1,0, 2,1]),
-    V('warszawa', 'Warszawa', [I('Pałac Kultury','🗼','z Pałacem Kultury'), I('Warszawa','🏙️','z Warszawą'), I('Człowiek','🧍','z człowiekiem')], [0,1, 1,2, 2,0]),
+    V('classic', 'Klasyczne', [I('Kamień','✊','z kamieniem'), I('Papier','✋','z papierem'), I('Nożyce','✌️','z nożycami',1)], [0,2, 1,0, 2,1], ['fist','wall','two']),
+    V('grecja', 'Grecja · katamaran', [I('Sztorm','⛈️','ze sztormem'), I('Kotwica','⚓','z kotwicą'), I('Katamaran','⛵','z katamaranem')], [0,2, 1,0, 2,1], ['wave','fist','roof']),
+    V('portugalia', 'Portugalia', [I('Statek','🚢','ze statkiem'), I('Wieża','🏰','z wieżą'), I('Morze','🌊','z morzem')], [0,1, 1,2, 2,0], ['wall','one','wave']),
+    V('narty', 'Ferie na nartach', [I('Narty','🎿','z nartami',1), I('Góra','🏔️','z górą'), I('Człowiek','🧍','z człowiekiem')], [0,1, 1,2, 2,0], ['two','roof','one']),
+    V('laka', 'Wakacje na łące', [I('Marchewka','🥕','z marchewką'), I('Królik','🐇','z królikiem'), I('Norka','🕳️','z norką')], [0,2, 1,0, 2,1], ['one','two','fist']),
+    V('namiot', 'Pod namiotem', [I('Kula','🔮','z kulą'), I('Namiot','⛺','z namiotem'), I('Rękawiczka','🧤','z rękawiczką')], [0,1, 1,2, 2,0], ['fist','roof','sun']),
+    V('deszcz', 'Deszczowa pogoda', [I('Deszcz','🌧️','z deszczem'), I('Parasol','☂️','z parasolem'), I('Człowiek','🧍','z człowiekiem')], [0,2, 1,0, 2,1], ['wave','roof','one']),
+    V('sushi', 'Kolacja sushi', [I('Sushi','🍣','z sushi'), I('Pałeczki','🥢','z pałeczkami',1), I('Człowiek','🧍','z człowiekiem')], [0,2, 1,0, 2,1], ['fist','two','one']),
+    V('zima', 'Zima', [I('Śnieg','❄️','ze śniegiem'), I('Słońce','☀️','ze słońcem'), I('Okulary','🕶️','z okularami',1)], [0,2, 1,0, 2,1], ['fist','sun','two']),
+    V('singapur', 'Singapur', [I('Lew morski','🦭','z lwem morskim'), I('Pożar','🔥','z pożarem'), I('Kłoda','🪵','z kłodą')], [0,1, 1,2, 2,0], ['wave','sun','wall']),
+    V('bali', 'Bali', [I('Deska','🏄','z deską'), I('Człowiek','🧍','z człowiekiem'), I('Fala','🌊','z falą')], [0,2, 1,0, 2,1], ['wall','one','wave']),
+    V('japonia', 'Japonia', [I('Daniel','🦌','z danielem'), I('Człowiek','🧍','z człowiekiem'), I('Samochód','🚗','z samochodem')], [0,1, 1,2, 2,0], ['sun','one','fist']),
+    V('jurassic', 'Jurassic Park', [I('T-Rex','🦖','z T-Reksem'), I('Bakterie','🦠','z bakteriami',1), I('Człowiek','🧍','z człowiekiem')], [0,2, 1,0, 2,1], ['sun','fist','one']),
+    V('warszawa', 'Warszawa', [I('Pałac Kultury','🗼','z Pałacem Kultury'), I('Warszawa','🏙️','z Warszawą'), I('Człowiek','🧍','z człowiekiem')], [0,1, 1,2, 2,0], ['one','wall','two']),
   ];
   VARIANTS.forEach(v => { const b = {}; for (let i = 0; i < 6; i += 2) b[v.beats[i]] = v.beats[i + 1]; v.win = b; v.classic = v.id === 'classic'; });
   const byId = id => VARIANTS.find(v => v.id === id) || VARIANTS[0];
 
   const WIN_TO = 3;
-  const BEAT = 500;                                  // odstęp raz–dwa–trzy
+  const BEAT = 750;                                  // odstęp raz–dwa–trzy (wolniej)
   const WORDS = ['raz', 'dwa', 'trzy'];
-  const windowMs = v => v.classic ? 1700 : 2400;   // linia czasu po „trzy”
   const NEXT = 2600;                                 // pokazanie wyniku przed kolejną rundą
 
   // =====================================================================
@@ -523,7 +542,7 @@
   }
   $('setupBack').onclick = () => show('home');
 
-  const itemVis = (v, i, big) => v.classic ? handSVG(GEST[i], 'static' + (big ? '' : ' thin')) : `<span class="e">${v.items[i].e}</span>`;
+  const itemVis = (v, i, big) => v.classic ? handSVG(v.g[i], 'static' + (big ? '' : ' thin')) : `<span class="e">${v.items[i].e}</span>`;
 
   function renderSetup() {
     const c = S.choice, seg = c === 'classic' ? 'classic' : c === 'random' ? 'random' : 'pick';
@@ -537,7 +556,7 @@
     } else {
       const v = byId(seg === 'classic' ? 'classic' : c);
       p.innerHTML = `<div class="pname">${v.name}</div>
-        <div class="tri">${v.items.map((it, i) => `<div>${itemVis(v, i, true)}<small>${it.n}${v.classic ? '' : ' · ' + GEST_NAME[i]}</small></div>`).join('')}</div>
+        <div class="tri">${v.items.map((it, i) => `<div>${itemVis(v, i, true)}<small>${it.n}${v.classic ? '' : ' · ' + GEST_NAME[v.g[i]]}</small></div>`).join('')}</div>
         <div class="rules">${v.items.map((it, i) => `<span><b>${it.n}</b> ${it.w} ${v.items[v.win[i]].z}</span>`).join('')}</div>`;
     }
     if (seg === 'pick') {
@@ -577,7 +596,7 @@
   function buildOpts(el, side) {
     const v = S.variant;
     el.innerHTML = v.items.map((it, i) => `<button class="opt" data-i="${i}" disabled>
-        ${itemVis(v, i)}${v.classic ? '' : handSVG(GEST[i], 'static thin tag')}<small>${it.n}</small></button>`).join('');
+        ${itemVis(v, i)}${v.classic ? '' : handSVG(v.g[i], 'static thin tag')}<small>${it.n}</small></button>`).join('');
     el.querySelectorAll('.opt').forEach(b => b.onpointerdown = e => { e.stopPropagation(); choose(side, +b.dataset.i); });
   }
   function renderScore(bump) {
@@ -612,7 +631,7 @@
   const handEl = side => side === 'me' ? $('hBot') : $('hTop');
   function setHand(side, i) {          // i: indeks wyboru, null = spóźnienie, undefined = pięść
     const h = handEl(side), svg = h.querySelector('.hs'), badge = h.querySelector('.badge');
-    svg.dataset.g = i == null ? 'fist' : GEST[i];
+    svg.dataset.g = i == null ? 'fist' : S.variant.g[i];
     const showBadge = i != null && !S.variant.classic;
     badge.textContent = showBadge ? S.variant.items[i].e : (i === null ? '⏱️' : '');
     badge.classList.toggle('on', showBadge || i === null);
@@ -676,65 +695,65 @@
     ['me', 'opp'].forEach(s => { setHand(s, undefined); handEl(s).classList.remove('lost'); });
     setOpts('me', false); setOpts('opp', false); bar(0);
     duel('me', 'empty');
-    duel('opp', split() ? 'empty' : (S.oppLocked[r] ? 'locked' : 'empty'));
+    duel('opp', split() ? 'empty' : (S.oppLocked[r] ? 'locked' : 'wait'));
     sayHTML('me', ''); if (split()) sayHTML('opp', '');
-    later(countdown, 250);
+    later(countdown, 300);
   }
 
-  // Jeden zegar dla ruchu ręki i słów: uderzenie w dół = słowo. Dwa ruchy pięści.
+  // Jeden zegar dla ruchu ręki, słów i linii czasu. Uderzenie w dół = słowo.
+  // Linia czasu startuje razem z ręką; „trzy” wypada dokładnie w jej połowie.
   function countdown() {
-    const D = 2 * BEAT;
-    const up = 'translateY(-30px) rotate(-9deg)', down = 'translateY(0) rotate(0)';
+    const D = 3 * BEAT, total = 2 * D;
+    const up = 'translateY(-34px) rotate(-10deg)', down = 'translateY(0) rotate(0)';
     const eUp = 'cubic-bezier(.2,.7,.3,1)', eDown = 'cubic-bezier(.65,0,.95,.45)';
     const frames = [
-      { transform: down, offset: 0, easing: eUp }, { transform: up, offset: .25, easing: eDown },
-      { transform: down, offset: .5, easing: eUp }, { transform: up, offset: .75, easing: eDown },
+      { transform: down, offset: 0, easing: eUp }, { transform: up, offset: 1 / 6, easing: eDown },
+      { transform: down, offset: 2 / 6, easing: eUp }, { transform: up, offset: 3 / 6, easing: eDown },
+      { transform: down, offset: 4 / 6, easing: eUp }, { transform: up, offset: 5 / 6, easing: eDown },
       { transform: down, offset: 1 }
     ];
     const hands = split() ? [$('hBot'), $('hTop')] : [$('hBot')];
     S.anims = hands.map(h => h.animate(frames, { duration: D, easing: 'linear' }));
+    setOpts('me', true); if (split()) setOpts('opp', true);
+    bar(total);
+    if (S.mode === 'bot') later(() => choose('opp', rnd(3)), 400 + rnd(D + 900));
+    later(onDeadline, total);
     const lead = S.anims[0];
     let fired = 0;
     const loop = () => {
       const t = lead.currentTime == null ? D : lead.currentTime;
-      while (fired < 2 && t >= (fired + 1) * BEAT - 8) { onBeat(fired); fired++; }
-      if (fired < 2) S.raf = requestAnimationFrame(loop);
+      while (fired < 3 && t >= (fired + 1) * BEAT - 8) { onBeat(fired); fired++; }
+      if (fired < 3) S.raf = requestAnimationFrame(loop);
     };
     S.raf = requestAnimationFrame(loop);
-    later(openWindow, D + BEAT * .6);       // „trzy” w rytmie, start linii czasu
   }
 
-  function onBeat(i) { word(WORDS[i]); Snd.tick(i); buzz(8); }
-
-  function openWindow() {
-    if (S.phase !== 'pick') return;
+  function onBeat(i) {
+    word(WORDS[i] + (i === 2 ? '!' : '')); Snd.tick(i); buzz(i === 2 ? 18 : 8);
+    if (i < 2) return;
+    // TRZY — kto już wybrał, temu dłoń otwiera się teraz; reszta w chwili naciśnięcia
     S.open = true;
-    word('trzy!'); Snd.tick(2); buzz(18);
-    const ms = windowMs(S.variant);
-    setOpts('me', true); if (split()) setOpts('opp', true);
-    if (!split() && S.opp === undefined && !S.oppLocked[S.round]) duel('opp', 'wait');
-    bar(ms);
-    if (S.mode === 'bot') later(() => choose('opp', rnd(3)), 280 + rnd(Math.max(200, ms - 700)));
-    later(onDeadline, ms);
-    checkDone();
+    if (S.me !== undefined) setHand('me', S.me);
+    if (split() && S.opp !== undefined) setHand('opp', S.opp);
+    later(checkDone, 450);
   }
 
   function choose(side, i) {
-    if (S.phase !== 'pick' || !S.open || S.deadlinePassed) return;
+    if (S.phase !== 'pick' || S.deadlinePassed) return;
     Snd.unlock();
     if (side === 'me') {
       if (S.me !== undefined) return;
       S.me = i; markChosen('me', i); buzz(12);
-      setHand('me', i);                                   // dłoń otwiera się w chwili naciśnięcia
+      if (S.open) setHand('me', i);                      // po „trzy” dłoń otwiera się od razu
       if (!split()) duel('me', 'mine', i);
       if (S.mode === 'online') { send({ t: 'lock', r: S.round }); tryReveal(); }
     } else {
       if (S.opp !== undefined) return;
       S.opp = i;
-      if (split()) { markChosen('opp', i); buzz(12); setHand('opp', i); }
+      if (split()) { markChosen('opp', i); buzz(12); if (S.open) setHand('opp', i); }
       else duel('opp', 'locked');
     }
-    checkDone();
+    if (S.open) later(checkDone, 350);
   }
 
   function onDeadline() {
