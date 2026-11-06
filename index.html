@@ -114,8 +114,7 @@
   .hs.thin .th, .hs.thin .palm { stroke-width: 9; }
 
   /* ---------- HOME ---------- */
-  .logo { font-size: 22px; letter-spacing: -.03em; margin: 6px 0 0; display: flex; align-items: center; justify-content: center; gap: 10px; }
-  .logo img { width: 34px; height: 34px; border-radius: 9px; box-shadow: 0 0 0 1px var(--line); }
+  .logo { font-size: 22px; letter-spacing: -.03em; margin: 6px 0 0; text-align: center; }
   .logo b { font-weight: 900; } .logo span { font-weight: 400; color: var(--muted); }
   .hero { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 22px; min-height: 220px; }
   .hero .wrap { width: clamp(170px, 30vh, 240px); transform-origin: 8% 60%; animation: wave 3.6s infinite; }
@@ -226,7 +225,10 @@
   }
   .opt .e { font-size: clamp(40px, 7vh, 56px); }
   .opt .hs { width: clamp(52px, 8.5vh, 70px); }
-  .game.split-mode .opt { min-height: clamp(110px, 16vh, 172px); }
+  .game.split-mode .opt { min-height: clamp(84px, 12vh, 132px); gap: 6px; padding: 8px 4px; }
+  .game.split-mode .opt .hs { width: clamp(42px, 6.5vh, 58px); }
+  .game.split-mode .opt .e { font-size: clamp(32px, 5.4vh, 46px); }
+  .game.split-mode .opt small { font-size: 13px; }
   .opt .tag { position: absolute; top: 7px; right: 8px; width: 17px; opacity: .55; }
   .opt small { font-size: 14px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%; padding: 0 2px; }
   .opt:disabled { opacity: .45; }
@@ -245,7 +247,7 @@
   .half.top { transform: rotate(180deg); }
   .stage:not(.split) .half.top { display: none; }
   .hand { position: relative; width: clamp(190px, 62vw, 270px); transform-origin: 8% 60%; will-change: transform; transition: opacity .3s; flex: none; }
-  .split .hand { width: clamp(140px, 42vw, 200px); }
+  .split .hand { width: clamp(104px, 30vw, 150px); }
   .hand .badge {
     position: absolute; right: -6%; top: -16%; width: 30%; aspect-ratio: 1; border-radius: 50%;
     background: var(--bg); border: 3px solid var(--ink); display: grid; place-items: center;
@@ -253,7 +255,19 @@
   }
   .hand .badge.on { transform: scale(1); }
   .say { text-align: center; min-height: clamp(70px, 13vh, 120px); display: flex; flex-direction: column; align-items: center; justify-content: flex-start; gap: 4px; padding: 0 6px; }
-  .split .say { min-height: 64px; }
+  .split .say { min-height: 52px; }
+  .split .word { font-size: clamp(30px, 5.2vh, 44px); }
+  .split .half { gap: 4px; }
+  @media (max-height: 740px) {          /* niskie telefony (np. iPhone SE): więcej miejsca na raz-dwa-trzy */
+    .game.split-mode .opt { min-height: 72px; }
+    .game.split-mode .opt .hs { width: 40px; }
+    .split .hand { width: clamp(80px, 23vw, 112px); }
+    .split .say { min-height: 40px; gap: 2px; }
+    .split .word { font-size: 30px; }
+    .split .verdict { font-size: 18px; }
+    .split .point { font-size: 12px; padding: 3px 10px; margin-top: 2px; }
+    .split ~ .tapnext, .split .tapnext { display: none; }
+  }
   .word { font-size: clamp(36px, 7vh, 60px); font-weight: 900; letter-spacing: -.035em; line-height: 1; }
   .word.hit { animation: hit .26s var(--ease); }
   @keyframes hit { from { transform: scale(1.4); opacity: .15; } }
@@ -304,7 +318,7 @@
 
 <!-- HOME -->
 <section id="home" class="screen">
-  <div class="logo"><img src="apple-touch-icon.png" alt=""><span><b>palm</b> <span>games</span></span></div>
+  <div class="logo"><b>palm</b> <span>games</span></div>
   <div class="hero">
     <div class="wrap" id="heroHand"></div>
     <div class="rhythm"><span>RAZ</span><span>DWA</span><span>TRZY</span></div>
@@ -681,8 +695,7 @@
   }
   function markChosen(side, i) {
     const el = side === 'me' ? $('oBot') : $('oTop');
-    if (split()) { const v = document.createElement('div'); v.className = 'veil'; v.textContent = 'Wybrane ✓'; el.appendChild(v); }
-    else el.querySelectorAll('.opt').forEach(b => { b.disabled = true; b.classList.toggle('sel', +b.dataset.i === i); });
+    el.querySelectorAll('.opt').forEach(b => { b.disabled = true; b.classList.toggle('sel', +b.dataset.i === i); });
   }
   const handEl = side => side === 'me' ? $('hBot') : $('hTop');
   function setHand(side, i) {          // i: indeks wyboru, null = spóźnienie, undefined = pięść
