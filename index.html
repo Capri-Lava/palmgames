@@ -329,7 +329,7 @@
     <button class="row-btn" data-mode="online"><span><b>Online</b><small>Dwa telefony, link lub kod</small></span><span class="arr">→</span></button>
   </div>
   <div class="join">
-    <input id="joinCode" class="code" maxlength="4" placeholder="KOD" autocomplete="off" autocapitalize="characters" spellcheck="false">
+    <input id="joinCode" class="code" maxlength="4" placeholder="0000" inputmode="numeric" pattern="[0-9]*" autocomplete="off" spellcheck="false">
     <button class="btn" id="btnJoin">Dołącz</button>
   </div>
   <input id="joinName" class="hidden" maxlength="16" placeholder="Twoje imię" autocomplete="off">
@@ -931,20 +931,20 @@
 
   // =====================================================================
   //  ONLINE
-  //  1) PeerJS — serwer tylko „przedstawia” telefony, potem P2P
-  //  2) przekaźnik (MQTT po WebSocket) — zapas, gdy telefony nie mogą
-  //     połączyć się bezpośrednio (np. iPhone + Android, różne sieci)
+  //  1) przekaźnik MQTT po WebSocket (trzy publiczne serwery naraz) — podstawa,
+  //     działa w wifi i w sieci komórkowej
+  //  2) PeerJS (połączenie bezpośrednie) — zapas, gdyby serwery MQTT nie odpowiadały
   // =====================================================================
   const PREFIX = 'palmgames-kpn-';
-  const ALPH = 'ABCDEFGHJKMNPQRSTUVWXYZ23456789';
+  const ALPH = '0123456789';
   const BROKERS = ['wss://broker.emqx.io:8084/mqtt', 'wss://broker.hivemq.com:8884/mqtt', 'wss://test.mosquitto.org:8081/mqtt'];
-  const RELAY_AFTER = 4000;        // tyle dajemy P2P, zanim zapukamy przez przekaźnik
+  const RELAY_AFTER = 0;           // przez przekaźnik pukamy od razu; P2P łączy się równolegle jako zapas
   const myId = Math.random().toString(36).slice(2, 10) + rnd(1e4);
   let peer = null, conn = null, isHost = false, code = null, retryTimer = null, leaving = false;
   let linked = false, viaRelay = false, relays = [], relayOut = '', tickTimer = null, seq = 0;
   let guestId = null, lastN = null, linkAt = 0, knockN = 0, lastKnock = 0, downSince = 0, joinAt = 0, lastHb = 0, lastSeen = 0;
   const seen = new Set();
-  const randomCode = () => { let c = ''; for (let i = 0; i < 4; i++) c += ALPH[rnd(ALPH.length)]; return c; };
+  const randomCode = () => String(1000 + rnd(9000));
 
   // ---------- mini-klient MQTT 3.1.1 (tylko to, czego potrzeba) ----------
   const te = new TextEncoder(), td = new TextDecoder();
@@ -1084,7 +1084,7 @@
     $('btnShare').textContent = 'Wyślij link';
     show('waiting');
     startNet();
-    peer = new Peer(PREFIX + code);
+    peer = mkPeer(PREFIX + code);
     peer.on('open', () => { $('waitStatus').innerHTML = 'Czekam na drugą osobę<span class="dots"></span>'; });
     peer.on('connection', c => {
       if (linked) {
@@ -1102,8 +1102,8 @@
   }
 
   function joinRoom(c) {
-    c = (c || '').toUpperCase().replace(/[^A-Z0-9]/g, '');
-    if (c.length !== 4) { $('homeErr').textContent = 'Kod ma 4 znaki.'; return; }
+    c = String(c || '').replace(/\D/g, '');
+    if (c.length !== 4) { $('homeErr').textContent = 'Kod ma 4 cyfry.'; return; }
     const n = $('joinName').value.trim(); if (n) store.set('pg-name', n);
     if (!myName()) { $('joinName').classList.remove('hidden'); $('joinName').focus(); $('homeErr').textContent = 'Podaj imię.'; return; }
     leaveNet(); leaving = false;
@@ -1111,7 +1111,7 @@
     S.names = { me: myName(), opp: 'Gospodarz' };
     $('homeErr').textContent = 'Łączę…';
     startNet();
-    peer = new Peer();
+    peer = mkPeer();
     peer.on('open', connectToHost);
     peer.on('disconnected', () => { if (!leaving) setTimeout(() => peer && !peer.destroyed && peer.reconnect(), 1000); });
     peer.on('error', e => {
@@ -1120,6 +1120,11 @@
       if (e.type === 'peer-unavailable') { if (inGame) scheduleRetry(); else if (!relayReady()) $('homeErr').textContent = `Nie ma pokoju ${code}.`; }
       else if (!inGame && !relayReady()) $('homeErr').textContent = 'Błąd połączenia (' + e.type + ').';
     });
+  }
+  // gdy biblioteka PeerJS się nie wczyta (brak sieci do CDN), gramy samym przekaźnikiem
+  function mkPeer(id) {
+    try { if (window.Peer) return id ? new Peer(id) : new Peer(); } catch {}
+    return { on() {}, connect() { return null; }, reconnect() {}, destroy() { this.destroyed = true; }, destroyed: false, disconnected: false };
   }
   function connectToHost() { clearTimeout(retryTimer); if (linked || !peer || peer.destroyed) return; attach(peer.connect(PREFIX + code, { reliable: true })); }
   function scheduleRetry() {
@@ -1226,7 +1231,7 @@
   window.addEventListener('pagehide', () => { if (linked && viaRelay) send({ t: 'bye' }); });
   const fromLink = new URLSearchParams(location.search).get('pokoj');
   if (fromLink) {
-    $('joinCode').value = fromLink.toUpperCase();
+    $('joinCode').value = fromLink.replace(/\D/g, '');
     if (myName()) joinRoom(fromLink);
     else { $('joinName').classList.remove('hidden'); $('homeErr').textContent = 'Podaj imię i dołącz.'; }
   }
